@@ -181,9 +181,14 @@ export function RunView({ runId, onBack, showcase, linkTo }: { runId: string; on
 
   // Auto-follow: new steps scroll into view while the reader is at the bottom. Scrolling up breaks out.
   useEffect(() => {
+    // Only the reader scrolling up breaks follow; going down, or the page settling, does not.
+    let lastY = window.scrollY;
     const onScroll = () => {
-      const gap = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
-      followRef.current = gap < FOLLOW_SLACK_PX;
+      const y = window.scrollY;
+      const gap = document.documentElement.scrollHeight - window.innerHeight - y;
+      if (gap < FOLLOW_SLACK_PX) followRef.current = true;
+      else if (y < lastY) followRef.current = false;
+      lastY = y;
       setFollow(followRef.current);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
