@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { PullRequestRow, RunRow } from "./db";
 import type { RunEvent } from "./events";
 import { sseFrame, toPullRequestDto, toRunDto } from "./read-model.js";
-import { summarizeRun } from "../shared/run-facts";
+import { summarizeRun } from "../shared/run-facts.js";
 
 /** The message every refused request returns in showcase mode; the UI shows it verbatim. */
 export const SHOWCASE_MESSAGE = "showcase mode: run it locally to start real runs";

@@ -180,6 +180,8 @@ describe("showcase building blocks", () => {
       const src = readFileSync(file, "utf8");
       for (const m of src.matchAll(/^import\s+(?!type\s)[^;]*?from\s+["']([^"']+)["']/gm)) {
         const spec = m[1]!;
+        // Vercel runs the function as Node ESM, which needs the extension on relative imports.
+        if (spec.startsWith(".") && !spec.endsWith(".json")) expect(spec, `${file} needs an explicit .js extension`).toMatch(/\.js$/);
         if (spec.startsWith(".")) {
           const base = path.resolve(path.dirname(file), spec.replace(/\.js$/, ""));
           visit(existsSync(`${base}.ts`) ? `${base}.ts` : base);

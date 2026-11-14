@@ -8,7 +8,7 @@ import type { Engine } from "./engine";
 import { serveGitHttp } from "./git/http";
 import { ZodError } from "zod";
 import { sseFrame, toRunDto } from "./read-model";
-import { summarizeRun } from "../shared/run-facts";
+import { summarizeRun } from "../shared/run-facts.js";
 
 const HEARTBEAT_MS = 15_000;
 
