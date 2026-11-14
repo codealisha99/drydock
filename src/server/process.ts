@@ -6,6 +6,8 @@ export interface ExecResult {
   stderr: string;
   timedOut: boolean;
   aborted: boolean;
+  /** True when stdout or stderr exceeded maxBytes and the excess was dropped. */
+  truncated: boolean;
 }
 
 export interface ExecOptions {
@@ -27,6 +29,7 @@ export function runProcess(bin: string, args: string[], opts: ExecOptions = {}):
     const out = { stdout: [] as Buffer[], stderr: [] as Buffer[], size: 0 };
     let timedOut = false;
     let aborted = false;
+    let truncated = false;
     const kill = () => child.kill("SIGKILL");
     const timer = opts.timeoutMs
       ? setTimeout(() => {
@@ -42,8 +45,12 @@ export function runProcess(bin: string, args: string[], opts: ExecOptions = {}):
     opts.signal?.addEventListener("abort", onAbort, { once: true });
 
     const collect = (bucket: Buffer[]) => (chunk: Buffer) => {
-      if (out.size >= maxBytes) return;
+      if (out.size >= maxBytes) {
+        truncated = true;
+        return;
+      }
       const room = maxBytes - out.size;
+      if (chunk.length > room) truncated = true;
       const piece = chunk.length > room ? chunk.subarray(0, room) : chunk;
       out.size += piece.length;
       bucket.push(piece);
@@ -64,6 +71,7 @@ export function runProcess(bin: string, args: string[], opts: ExecOptions = {}):
         stderr: Buffer.concat(out.stderr).toString("utf8"),
         timedOut,
         aborted,
+        truncated,
       });
     });
     child.stdin.on("error", () => {

@@ -44,6 +44,15 @@ describe("runSandboxTool", () => {
     expect(readFileSync(path.join(dir, "src", "math.js"), "utf8")).toContain("a + b");
   });
 
+  it("never truncates a file while editing it", async () => {
+    const { sb, dir } = localSandbox();
+    const big = `MARK\n${"x".repeat(300_000)}\n`;
+    writeFileSync(path.join(dir, "big.txt"), big);
+    const res = await runSandboxTool(sb, "edit_file", { path: "big.txt", old_string: "MARK", new_string: "DONE" });
+    const onDisk = readFileSync(path.join(dir, "big.txt"), "utf8");
+    expect(onDisk === big.replace("MARK", "DONE") || (res.isError && onDisk === big)).toBe(true);
+  });
+
   it("rejects path escapes before touching the sandbox", async () => {
     const { sb } = localSandbox();
     const res = await runSandboxTool(sb, "read_file", { path: "../../etc/passwd" });

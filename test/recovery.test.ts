@@ -16,7 +16,7 @@ function fakeOps(containers: string[] = []) {
     start: async () => {
       throw new Error("not used");
     },
-    attach: (name) => ({ name, workspace: "/work", exec: async () => ({ code: 0, stdout: "", stderr: "", timedOut: false, aborted: false }) }),
+    attach: (name) => ({ name, workspace: "/work", exec: async () => ({ code: 0, stdout: "", stderr: "", timedOut: false, aborted: false, truncated: false }) }),
     remove: async (name) => {
       removed.push(name);
     },

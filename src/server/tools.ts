@@ -5,6 +5,7 @@ import { resolveWorkspacePath } from "./workspace";
 
 export const MAX_TOOL_OUTPUT = 16_000;
 const COMMAND_TIMEOUT_MS = 120_000;
+const MAX_EDIT_BYTES = 4 * 1024 * 1024;
 
 const ReadInput = z.object({ path: z.string() }).strict();
 const WriteInput = z.object({ path: z.string(), content: z.string().max(512_000) }).strict();
@@ -106,8 +107,10 @@ async function writeFile(sb: Sandbox, rawPath: string, content: string, signal?:
 
 /** Exact-once replacement, done on the host from a sandbox read so the model never writes raw shell. */
 async function editFile(sb: Sandbox, input: z.infer<typeof EditInput>, signal?: AbortSignal): Promise<ToolResult> {
-  const original = await sb.exec('cat -- "$1"', [resolveWorkspacePath(input.path, sb.workspace)], { signal, maxBytes: 4 * MAX_TOOL_OUTPUT * 4 });
+  const original = await sb.exec('cat -- "$1"', [resolveWorkspacePath(input.path, sb.workspace)], { signal, maxBytes: MAX_EDIT_BYTES });
   if (original.code !== 0) return fail(original.stderr.trim() || `cannot read ${input.path}`);
+  // Writing back a partial read would silently truncate the file, so refuse instead.
+  if (original.truncated) return fail(`${input.path} is larger than ${MAX_EDIT_BYTES} bytes; edit_file cannot change it safely`);
   const occurrences = original.stdout.split(input.old_string).length - 1;
   if (occurrences !== 1) return fail(`old_string must occur exactly once in ${input.path}; found ${occurrences}`);
   const updated = original.stdout.replace(input.old_string, () => input.new_string);

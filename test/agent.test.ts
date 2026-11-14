@@ -7,7 +7,7 @@ import type { Message, ModelClient } from "../src/server/model/types";
 const fakeSandbox: Sandbox = {
   name: "fake",
   workspace: "/work",
-  exec: async (script) => ({ code: 0, stdout: `ran: ${script}`, stderr: "", timedOut: false, aborted: false }),
+  exec: async (script) => ({ code: 0, stdout: `ran: ${script}`, stderr: "", timedOut: false, aborted: false, truncated: false }),
 };
 
 const user = (text: string): Message => ({ role: "user", content: [{ type: "text", text }] });
