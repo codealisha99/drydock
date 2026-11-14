@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>drydock: a coding agent that works in a box and hands you a branch</title>
-    <meta name="description" content="drydock runs a coding agent in its own hardened Docker sandbox, streams every step to a timeline, and delivers the result as a git branch. Credentials never enter the sandbox." />
+    <meta name="description" content="drydock runs a coding agent in its own hardened Docker sandbox, streams every step to a timeline, and delivers the result as a git branch. Model keys and push credentials never enter the sandbox." />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="drydock: a coding agent that works in a box and hands you a branch" />
-    <meta property="og:description" content="One hardened Docker sandbox per run, a live timeline, and git delivery. The hosted demo replays recorded runs." />
+    <meta property="og:title" content="drydock: the agent works in a box, you get the branch" />
+    <meta property="og:description" content="One hardened Docker sandbox per run, a live timeline, and git delivery. Open the live showcase to watch recorded runs." />
     <meta property="og:image" content="https://drydock-site-two.vercel.app/img/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://drydock-site-two.vercel.app/" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230f2b33'/%3E%3Crect x='6' y='9' width='20' height='3' fill='%23e3a62f'/%3E%3Crect x='6' y='16' width='13' height='3' fill='%23f7f9f8'/%3E%3Crect x='6' y='23' width='17' height='3' fill='%232d6a55'/%3E%3C/svg%3E" />
@@ -18,74 +20,61 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-head">
-      <a class="mark" href="#top" aria-label="drydock home">drydock</a>
+      <a class="mark" href="#top" aria-label="drydock, back to top">drydock</a>
       <nav aria-label="Primary">
         <a href="#how">How it works</a>
         <a href="#runs">Recorded runs</a>
+        <a href="#code">Where to look</a>
         <a href="#run-it">Run it</a>
-        <a href="https://github.com/codealisha99/drydock">Source</a>
+        <a href="https://github.com/codealisha99/drydock">GitHub</a>
       </nav>
     </header>
 
-    <main id="top">
-      <section class="hero">
+    <main id="main">
+      <section class="hero" id="top">
         <div class="hero-copy">
           <h1>The agent works in a box. You get the branch.</h1>
-          <p class="lede">drydock runs a coding agent inside its own locked-down Docker container, streams every step to a live timeline, and delivers the result as a git branch. The model&rsquo;s keys and the push credentials never enter the sandbox.</p>
+          <p class="lede">drydock runs a coding agent in its own locked-down Docker container, streams every step to a timeline, and delivers the result as a git branch. Model keys and push credentials never enter the sandbox.</p>
           <div class="actions">
-            <a class="btn btn-primary" href="https://drydock-demo-opal.vercel.app/#/runs/4958fd73f9d8">Watch a recorded run</a>
-            <a class="btn" href="#runs">See all three outcomes</a>
+            <a class="btn btn-primary" href="https://drydock-demo-opal.vercel.app">Open the live showcase</a>
+            <a class="btn" href="https://github.com/codealisha99/drydock">View the source</a>
           </div>
-          <p class="note">The live demo replays recorded runs. It cannot start new ones: it runs on Vercel, which has no Docker. Run it locally to start real runs.</p>
+          <p class="proof-note">Recorded runs, scripted model, real Docker sandbox. The showcase replays them and refuses writes.</p>
         </div>
 
         <figure class="log" aria-labelledby="log-cap">
-          <figcaption id="log-cap">
-            <span>Recorded run 4958fd73f9d8</span>
-            <span>scripted model, real Docker sandbox</span>
+          <figcaption class="log-head">
+            <span id="log-cap">Run <code>e65d6c98e21a</code>, multi-file fix</span>
+            <button type="button" class="log-toggle" id="log-toggle" aria-pressed="false">Pause</button>
           </figcaption>
-          <ol class="log-lines">
-        <li class="ln ln-sys" style="--i:0"><time>00.00</time><span class="lbl">status</span><span class="txt">status queued</span></li>
-        <li class="ln ln-sys" style="--i:1"><time>00.00</time><span class="lbl">status</span><span class="txt">status running</span></li>
-        <li class="ln ln-sys" style="--i:2"><time>00.32</time><span class="lbl">status</span><span class="txt">workspace ready</span></li>
-        <li class="ln ln-agent" style="--i:3"><time>00.32</time><span class="lbl">agent</span><span class="txt">I&#x27;ll run the test suite to see the failure first.</span></li>
-        <li class="ln ln-tool" style="--i:4"><time>00.32</time><span class="lbl">bash</span><span class="txt">node --test</span></li>
-        <li class="ln ln-err" style="--i:5"><time>00.42</time><span class="lbl">result</span><span class="txt">error: pass 0, fail 1</span></li>
-        <li class="ln ln-agent" style="--i:6"><time>00.42</time><span class="lbl">agent</span><span class="txt">add() is subtracting. Reading the source before editing.</span></li>
-        <li class="ln ln-tool" style="--i:7"><time>00.42</time><span class="lbl">read_file</span><span class="txt">src/math.js</span></li>
-        <li class="ln ln-res" style="--i:8"><time>00.45</time><span class="lbl">result</span><span class="txt">export function add(a, b) {</span></li>
-        <li class="ln ln-agent" style="--i:9"><time>00.45</time><span class="lbl">agent</span><span class="txt">The operator is wrong in add(). Fixing it.</span></li>
-        <li class="ln ln-tool" style="--i:10"><time>00.45</time><span class="lbl">edit_file</span><span class="txt">src/math.js</span></li>
-        <li class="ln ln-res" style="--i:11"><time>00.52</time><span class="lbl">result</span><span class="txt">wrote 46 chars to src/math.js</span></li>
-        <li class="ln ln-agent" style="--i:12"><time>00.52</time><span class="lbl">agent</span><span class="txt">Re-running the suite.</span></li>
-        <li class="ln ln-tool" style="--i:13"><time>00.52</time><span class="lbl">bash</span><span class="txt">node --test</span></li>
-        <li class="ln ln-res" style="--i:14"><time>00.61</time><span class="lbl">result</span><span class="txt">pass 1, fail 0</span></li>
-        <li class="ln ln-tool" style="--i:15"><time>00.61</time><span class="lbl">finish</span><span class="txt">succeeded</span></li>
-        <li class="ln ln-res" style="--i:16"><time>00.61</time><span class="lbl">result</span><span class="txt">finished</span></li>
-        <li class="ln ln-sys" style="--i:17"><time>00.73</time><span class="lbl">diff</span><span class="txt">+1 −1 in src/math.js</span></li>
-        <li class="ln ln-sys" style="--i:18"><time>01.02</time><span class="lbl">deliver</span><span class="txt">drydock/run-4958fd73f9d8 to local remote</span></li>
-        <li class="ln ln-out" style="--i:19"><time>01.02</time><span class="lbl">outcome</span><span class="txt">succeeded</span></li>
-        <li class="ln ln-sys" style="--i:20"><time>01.02</time><span class="lbl">status</span><span class="txt">status succeeded</span></li>
-          </ol>
+          <ol class="log-lines" id="log-lines" aria-label="Recorded events from run e65d6c98e21a"></ol>
+          <p class="log-foot">Replayed from the recorded events at a watchable pace. Timestamps are the recorded seconds.</p>
         </figure>
+      </section>
+
+      <section class="facts" aria-label="What the recordings show">
+        <p><strong>5</strong> runs recorded against Docker, including one with a follow-up.</p>
+        <p><strong>3</strong> test runs in the multi-file fix, going from 3 failing to all 5 passing.</p>
+        <p><strong>0</strong> API keys in the sandbox's environment, checked by a test against a live container.</p>
       </section>
 
       <section id="how" class="block split">
         <h2>The hard part is the boundary.</h2>
         <div class="prose">
-          <p>An agent that runs commands needs a machine, a repository and a way to push. None of the three should be trusted with more than it needs. So the sandbox gets none of the secrets, and the host does everything that touches the network or GitHub.</p>
-          <ul class="facts">
-            <li><strong>Container.</strong> <code>--cap-drop ALL</code>, <code>no-new-privileges</code>, a read-only root with a tmpfs workspace, 1 GB memory, 1 CPU, 256 PIDs, uid 1000, no host mounts.</li>
+          <p>An agent that runs commands needs a machine, a repository and a way to push. None of the three should hold more than it needs. The sandbox gets no secrets, and the host does everything that touches the network or GitHub.</p>
+          <ul class="facts-list">
+            <li><strong>Container.</strong> <code>--cap-drop ALL</code>, <code>no-new-privileges</code>, a read-only root with a tmpfs workspace, 1 GB of memory, 1 CPU, 256 PIDs, uid 1000, no host mounts.</li>
             <li><strong>Git in, not out.</strong> The sandbox clones over a read-only smart-HTTP route on the host. Pushes to that route are refused.</li>
-            <li><strong>Patches, not credentials.</strong> The host applies the sandbox&rsquo;s <code>format-patch</code> output to a fresh clone and pushes it. The GitHub token goes through git&rsquo;s env config, never argv.</li>
+            <li><strong>Patches, not credentials.</strong> The host applies the sandbox's <code>format-patch</code> output to a fresh clone and pushes it. The GitHub token goes through git's env config, never argv.</li>
           </ul>
-          <p class="caveat">This is a container, not a VM. A kernel exploit escapes it, so do not treat it as a multi-tenant boundary.</p>
+          <p class="caveat">This is a container, not a VM. A kernel exploit escapes it, so it is not a multi-tenant boundary.</p>
         </div>
       </section>
 
       <section class="block">
-        <h2>How a run moves through the system</h2>
+        <h2>How a run moves through the system.</h2>
         <figure class="diagram">
           <svg viewBox="0 0 860 350" role="img" aria-labelledby="arch-title arch-desc">
             <title id="arch-title">drydock architecture</title>
@@ -109,35 +98,27 @@
               <rect x="20" y="30" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
               <text x="105" y="56" text-anchor="middle" font-weight="600">Web UI</text>
               <text x="105" y="75" text-anchor="middle" fill="#4a5d5a" font-size="12">:4101</text>
-
               <rect x="230" y="30" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
               <text x="315" y="56" text-anchor="middle" font-weight="600">API</text>
               <text x="315" y="75" text-anchor="middle" fill="#4a5d5a" font-size="12">:4100, REST and SSE</text>
-
               <rect x="440" y="30" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
               <text x="525" y="56" text-anchor="middle" font-weight="600">Run queue</text>
               <text x="525" y="75" text-anchor="middle" fill="#4a5d5a" font-size="12">concurrency cap</text>
-
               <rect x="650" y="30" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
               <text x="735" y="56" text-anchor="middle" font-weight="600">Worker</text>
               <text x="735" y="75" text-anchor="middle" fill="#4a5d5a" font-size="12">host process</text>
-
               <rect x="390" y="160" width="160" height="80" rx="2" fill="#e4eee9" stroke="#2d6a55" stroke-width="2" />
               <text x="470" y="192" text-anchor="middle" font-weight="600">Sandbox</text>
               <text x="470" y="212" text-anchor="middle" fill="#4a5d5a" font-size="12">container, no caps</text>
-
               <rect x="650" y="160" width="170" height="80" rx="2" fill="#0f2b33" />
               <text x="735" y="192" text-anchor="middle" font-weight="600" fill="#f7f9f8">Agent loop</text>
               <text x="735" y="212" text-anchor="middle" fill="#b8c7c3" font-size="12">model and tools, host</text>
-
               <rect x="230" y="270" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
               <text x="315" y="296" text-anchor="middle" font-weight="600">SQLite</text>
               <text x="315" y="315" text-anchor="middle" fill="#4a5d5a" font-size="12">runs, events, PRs</text>
-
               <rect x="390" y="270" width="160" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
               <text x="470" y="296" text-anchor="middle" font-weight="600">Delivery</text>
               <text x="470" y="315" text-anchor="middle" fill="#4a5d5a" font-size="12">branch, PR</text>
-
               <rect x="650" y="270" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" stroke-dasharray="5 4" />
               <text x="735" y="296" text-anchor="middle" font-weight="600">Model</text>
               <text x="735" y="315" text-anchor="middle" fill="#4a5d5a" font-size="12">Anthropic or OpenAI API</text>
@@ -149,88 +130,143 @@
               <text x="743" y="257">model call</text>
             </g>
           </svg>
-          <figcaption>Solid arrows are control and data. Dashed arrows are the model call and the sandbox&rsquo;s git clone. The sandbox never holds a credential.</figcaption>
+          <figcaption>Solid arrows are control and data. Dashed arrows are the model call and the sandbox's git clone. The sandbox never holds a credential.</figcaption>
         </figure>
       </section>
 
       <section id="runs" class="block">
-        <h2>What three recorded runs did</h2>
-        <p class="lead">Each row was produced by <code>pnpm record:showcase</code>: the real server, a real Docker sandbox and the keyless scripted model, against the same broken <code>add()</code> fixture. Numbers come from the recorded database rows.</p>
+        <h2>Five runs, recorded against Docker.</h2>
+        <p class="lead">Each row is a real run from <code>pnpm record:showcase</code>: the real server, a real sandbox and the keyless scripted model. The numbers come from the recorded database rows.</p>
         <table class="manifest">
-          <caption class="sr-only">Outcomes of the three recorded runs</caption>
+          <caption class="sr-only">Outcomes of the five recorded runs</caption>
           <thead>
-            <tr><th scope="col">Outcome</th><th scope="col">Recorded run</th><th scope="col">Tool calls</th><th scope="col">Files changed</th><th scope="col">Delivered</th><th scope="col">Result summary</th></tr>
+            <tr><th scope="col">Outcome</th><th scope="col">Task</th><th scope="col">Tool calls</th><th scope="col">Files changed</th><th scope="col">Delivered</th><th scope="col">Result</th></tr>
           </thead>
           <tbody>
             <tr class="is-succeeded">
               <td data-label="Outcome"><span class="stamp">succeeded</span></td>
-              <td data-label="Recorded run" class="mono">4958fd73f9d8</td>
+              <td data-label="Task">Fix <code>add()</code> so the suite passes</td>
               <td data-label="Tool calls" class="num">5</td>
               <td data-label="Files changed" class="num">1 (+1 −1)</td>
               <td data-label="Delivered">branch on local remote</td>
-              <td data-label="Result summary">Fixed add() to return a + b; the test suite passes.</td>
+              <td data-label="Result">Fixed add() to return a + b; the test suite passes.</td>
+            </tr>
+            <tr class="is-succeeded">
+              <td data-label="Outcome"><span class="stamp">succeeded</span></td>
+              <td data-label="Task">Three bugs across three modules</td>
+              <td data-label="Tool calls" class="num">10</td>
+              <td data-label="Files changed" class="num">3 (+5 −4)</td>
+              <td data-label="Delivered">branch on local remote</td>
+              <td data-label="Result">Fixed cartTotal, formatMoney and splitEvenly. All 5 tests pass.</td>
+            </tr>
+            <tr class="is-succeeded">
+              <td data-label="Outcome"><span class="stamp">succeeded after a follow-up</span></td>
+              <td data-label="Task">Asks which convention wins, then fixes</td>
+              <td data-label="Tool calls" class="num">10</td>
+              <td data-label="Files changed" class="num">4 (+6 −5)</td>
+              <td data-label="Delivered">branch on local remote</td>
+              <td data-label="Result">The first shares take the remainder. README matches. All 5 tests pass.</td>
             </tr>
             <tr class="is-needs_input">
               <td data-label="Outcome"><span class="stamp">needs input</span></td>
-              <td data-label="Recorded run" class="mono">f7140d5b6960</td>
+              <td data-label="Task">Fix <code>add()</code>, with two valid APIs</td>
               <td data-label="Tool calls" class="num">1</td>
               <td data-label="Files changed" class="num">0</td>
               <td data-label="Delivered">no</td>
-              <td data-label="Result summary">Two valid fixes exist for the failing test; which API should win?</td>
+              <td data-label="Result">Two valid fixes exist for the failing test; which API should win?</td>
             </tr>
             <tr class="is-failed">
               <td data-label="Outcome"><span class="stamp">failed</span></td>
-              <td data-label="Recorded run" class="mono">099fc87e07c4</td>
+              <td data-label="Task">Fix <code>add()</code>, cannot be done</td>
               <td data-label="Tool calls" class="num">3</td>
               <td data-label="Files changed" class="num">0</td>
               <td data-label="Delivered">no</td>
-              <td data-label="Result summary">The test still fails and I could not find a change to src/math.js that is consistent with it. No files changed.</td>
+              <td data-label="Result">The test still fails and no change to src/math.js is consistent with it. No files changed.</td>
             </tr>
           </tbody>
         </table>
-        <p class="caveat">The agent in these runs is a fixed script, not a language model. That is what makes them repeatable, and it is also why they prove the plumbing (sandbox, git, delivery, inbox) but not the model&rsquo;s judgment. The live Anthropic path has not been run end to end.</p>
-        <figure class="shots">
-          <img src="img/run-desktop.png" width="1280" height="900" alt="Run page at desktop width: the recorded succeeded run with its timeline, the delivery panel and the diff" />
-          <img src="img/home-mobile.png" width="375" height="1200" alt="Home page at 375 pixels wide: the runs ledger stacked as cards, the new-run form and the inbox" />
-          <figcaption>Captured from the showcase build at 1280 and 375 pixels wide, 15 November 2026.</figcaption>
-        </figure>
+
+        <div class="rounds">
+          <h3>The multi-file fix, test run by test run</h3>
+          <ol class="round-steps">
+            <li><span class="round-count">3 failing · 2 pass</span><span>Before any edit</span></li>
+            <li><span class="round-count">2 failing · 3 pass</span><span>After the cart total fix</span></li>
+            <li><span class="round-count is-pass">all passing · 5 pass</span><span>After the format and split fixes</span></li>
+          </ol>
+        </div>
+
+        <p class="caveat">The agent in these runs is a fixed script, not a language model. That makes them repeatable and proves the plumbing: sandbox, git, delivery, follow-ups and the inbox. It does not prove the model's judgment. The live Anthropic path has not been run end to end.</p>
+      </section>
+
+      <section id="code" class="block code-block">
+        <h2>Where to look in the code.</h2>
+        <ul class="code-map">
+          <li>
+            <a href="https://github.com/codealisha99/drydock/blob/main/src/server/sandbox.ts"><code>src/server/sandbox.ts</code></a>
+            <p><code>startSandbox</code> is the whole container policy in one argument list: dropped capabilities, read-only root, no mounts, and no environment secrets.</p>
+          </li>
+          <li>
+            <a href="https://github.com/codealisha99/drydock/blob/main/src/server/worker.ts"><code>src/server/worker.ts</code></a>
+            <p><code>executeRun</code> runs one turn. A follow-up reuses the sandbox, and <code>finalize</code> turns the sandbox's changes into a patch and a delivery.</p>
+          </li>
+          <li>
+            <a href="https://github.com/codealisha99/drydock/blob/main/src/server/git/deliver.ts"><code>src/server/git/deliver.ts</code></a>
+            <p>The only path from a sandbox to git. The host applies the patch to a fresh clone and pushes; the sandbox never sees a token.</p>
+          </li>
+          <li>
+            <a href="https://github.com/codealisha99/drydock/blob/main/src/server/agent.ts"><code>src/server/agent.ts</code></a>
+            <p><code>runAgent</code> is the loop: ask the model, run its tool calls in the sandbox, feed the results back, and stop at <code>finish</code>.</p>
+          </li>
+          <li>
+            <a href="https://github.com/codealisha99/drydock/blob/main/src/server/showcase-app.ts"><code>src/server/showcase-app.ts</code></a>
+            <p>The read-only replay. It refuses every write and every git route before any handler runs, and paces the recorded gaps.</p>
+          </li>
+        </ul>
       </section>
 
       <section id="run-it" class="block">
         <h2>Run it yourself.</h2>
         <div class="prose run-it">
-          <p>You need Node 25 (or 22.13+), pnpm 10 and Docker. These are the README&rsquo;s commands; the last one submits a task to a scripted agent, follows the timeline, and checks the tests pass in the sandbox.</p>
-          <pre class="code"><code>pnpm install
-pnpm sandbox:build          # builds drydock-sandbox:latest (node:22-alpine + git, non-root)
-pnpm demo                   # keyless end-to-end run (starts the API, runs and tears down)</code></pre>
-          <p>Then <code>pnpm web</code> and open http://127.0.0.1:4101/ to read the run page. A real model needs a key in <code>.env</code>; see the README.</p>
+          <p>You need Node 25 (or 22.13+), pnpm 10 and Docker. The last command submits a task to the scripted agent, follows the timeline, and checks the tests pass inside the sandbox.</p>
+          <div class="command" data-copy>
+            <code>pnpm install &amp;&amp; pnpm sandbox:build</code>
+            <button type="button" class="copy">Copy</button>
+          </div>
+          <div class="command" data-copy>
+            <code>pnpm demo</code>
+            <button type="button" class="copy">Copy</button>
+          </div>
+          <p>Then <code>pnpm web</code> and open http://127.0.0.1:4101/ for the run page. Start real runs locally with <code>DRYDOCK_MODEL_PROVIDER=scripted pnpm api</code>, which needs no key. A real model needs a key in <code>.env</code>; see the README.</p>
         </div>
       </section>
 
       <section class="block split">
         <h2>What it does not do yet.</h2>
         <ul class="limits prose">
-          <li>Local-path repos are published by symlink on the git route, which is readable by anything that can reach 127.0.0.1:4100. Fine for one developer&rsquo;s machine, not a shared host.</li>
+          <li>Local-path repos are published by symlink on the git route, which anything that can reach 127.0.0.1:4100 can read. Fine for one developer's machine, not a shared host.</li>
           <li>Containers keep a normal bridge network, so they can reach the internet. A per-run network with an egress allow-list would close this.</li>
           <li>Private GitHub repos are not supported: the sandbox clones unauthenticated.</li>
-          <li>The live Anthropic path has not been verified end to end, and the GitHub delivery path is tested only against a fake fetch.</li>
+          <li>The live Anthropic path has not been verified end to end, and GitHub delivery is tested only against a fake fetch.</li>
           <li>There is no per-tool approval gate. Review happens in the PR, after the run.</li>
           <li>One process with an in-memory queue rebuilt from SQLite. Multi-host needs a real job queue.</li>
         </ul>
       </section>
 
       <section class="block about-live">
-        <h2>About the live demo.</h2>
+        <h2>The live showcase.</h2>
         <div class="prose">
-          <p>The live demo is at <a href="https://drydock-demo-opal.vercel.app">drydock-demo-opal.vercel.app</a>. It is a Vercel function over the three recorded runs above, read-only. Events replay with the gaps they had when they were recorded, so the succeeded run takes about one second. A slowed option stretches every gap four times and keeps the order. The agent in those runs is a scripted model. No language model is called, and no model key is set on the live demo.</p>
-          <p>To try it locally with the same recorded runs, run <code>pnpm showcase</code> and open http://127.0.0.1:4100/. Start a real run with <code>pnpm api</code> and Docker.</p>
-          <p>Every write and every git route on the hosted copy returns <code>403 showcase mode: run it locally to start real runs</code>.</p>
+          <p>The showcase at <a href="https://drydock-demo-opal.vercel.app">drydock-demo-opal.vercel.app</a> is the real UI over the five recorded runs, read-only. Replays start when a run opens and default to 4x slower than recorded so you can follow them. Recorded pace and replay from start are one click away.</p>
+          <p>It cannot start new runs, because a real run needs Docker and a model on your machine. The disabled controls say so and show the local command. Every write and every git route returns <code>403</code> with the same message.</p>
         </div>
       </section>
     </main>
 
     <footer class="site-foot">
-      <p>drydock is MIT licensed. <a href="https://github.com/codealisha99/drydock">Source on GitHub</a> &middot; <a href="https://drydock-demo-opal.vercel.app">Live demo</a></p>
+      <p>drydock is MIT licensed. <a href="https://github.com/codealisha99/drydock">Source on GitHub</a> · <a href="https://drydock-demo-opal.vercel.app">Live showcase</a></p>
     </footer>
+
+    <script src="run-log.js"></script>
+    <script src="hero-log.js" defer></script>
+    <script src="copy.js" defer></script>
   </body>
 </html>
