@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { api, type Run } from "./api";
+import { api, SHOWCASE_REFUSAL, type Run } from "./api";
 import { ago, firstLine, shortRepo } from "./format";
 import { StatusMark } from "./StatusMark";
 
@@ -27,7 +27,7 @@ function Inbox({ runs }: { runs: Run[] }) {
   );
 }
 
-function NewRunForm({ onCreated }: { onCreated: (id: string) => void }) {
+function NewRunForm({ onCreated, showcase }: { onCreated: (id: string) => void; showcase: boolean }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -35,8 +35,9 @@ function NewRunForm({ onCreated }: { onCreated: (id: string) => void }) {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    setBusy(true);
     setError(null);
+    if (showcase) return setError(SHOWCASE_REFUSAL);
+    setBusy(true);
     try {
       const { run } = await api.createRun(form);
       setForm(EMPTY_FORM);
@@ -109,7 +110,7 @@ function Ledger({ runs }: { runs: Run[] }) {
   );
 }
 
-export function HomeView({ onOpen }: { onOpen: (id: string) => void }) {
+export function HomeView({ onOpen, showcase }: { onOpen: (id: string) => void; showcase: boolean }) {
   const [runs, setRuns] = useState<Run[]>([]);
   const [inbox, setInbox] = useState<Run[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -145,7 +146,7 @@ export function HomeView({ onOpen }: { onOpen: (id: string) => void }) {
         <Ledger runs={runs} />
       </div>
       <aside className="home-side">
-        <NewRunForm onCreated={onOpen} />
+        <NewRunForm onCreated={onOpen} showcase={showcase} />
         <Inbox runs={inbox} />
       </aside>
     </div>

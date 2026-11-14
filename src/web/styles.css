@@ -164,7 +164,7 @@ textarea { resize: vertical; font-family: var(--sans); }
 .diff-line.del { background: #f6e3e3; color: #7a1d21; }
 .diff-line.hunk { color: var(--muted); background: var(--panel); }
 
-.showcase-note { padding: 8px 24px; background: #fbeee6; border-bottom: 1px solid #ecc9b3; color: var(--ink-2); font-size: 13px; }
+.showcase-note { max-width: none; padding: 8px 24px; background: #fbeee6; border-bottom: 1px solid #ecc9b3; color: var(--ink-2); font-size: 13px; }
 
 /* narrow screens */
 @media (max-width: 960px) {
@@ -191,3 +191,8 @@ textarea { resize: vertical; font-family: var(--sans); }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* showcase replay speed */
+.pace { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; margin-bottom: 12px; }
+.pace button { font: inherit; font-size: 13px; padding: 4px 10px; border: 1px solid var(--rule); border-radius: var(--radius); background: #fff; color: var(--ink); }
+.pace button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }

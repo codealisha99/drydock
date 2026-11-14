@@ -43,7 +43,7 @@ export function App() {
         </p>
       )}
       <main className="content">
-        {route.name === "home" ? <HomeView onOpen={openRun} /> : <RunView key={route.id} runId={route.id} onBack={goHome} showcase={showcase} />}
+        {route.name === "home" ? <HomeView onOpen={openRun} showcase={showcase} /> : <RunView key={route.id} runId={route.id} onBack={goHome} showcase={showcase} />}
       </main>
     </div>
   );

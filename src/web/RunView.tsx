@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { api, type RunDetail, type StreamEvent } from "./api";
+import { api, SHOWCASE_REFUSAL, type RunDetail, type StreamEvent } from "./api";
 import { DiffView } from "./DiffView";
 import { ago } from "./format";
 import { StatusMark } from "./StatusMark";
@@ -8,14 +8,21 @@ import { buildTimeline } from "./timeline-model";
 
 const ACTIVE = ["queued", "running"] as const;
 
-/** Keeps one EventSource per run and dedupes by seq, so reconnect replays are harmless. */
-function useRunEvents(runId: string, onSignal: () => void) {
+export type Pace = "recorded" | "slow";
+const TERMINAL = ["succeeded", "needs_input", "failed", "cancelled"];
+
+/**
+ * Keeps one EventSource per run and dedupes by seq, so reconnect replays are harmless.
+ * A showcase replay is finite: it closes on the run's terminal status so the browser does not reconnect and start over.
+ */
+function useRunEvents(runId: string, onSignal: () => void, pace: Pace, showcase: boolean) {
   const [events, setEvents] = useState<Map<number, StreamEvent>>(new Map());
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     setEvents(new Map());
-    const source = new EventSource(`/api/runs/${runId}/events?after=0`);
+    const slow = pace === "slow" ? "&pace=slow" : "";
+    const source = new EventSource(`/api/runs/${runId}/events?after=0${slow}`);
     source.onopen = () => setConnected(true);
     source.onerror = () => setConnected(false);
     const onMessage = (msg: MessageEvent<string>) => {
@@ -25,22 +32,24 @@ function useRunEvents(runId: string, onSignal: () => void) {
         return new Map(prev).set(event.seq, event);
       });
       if (event.type === "outcome" || event.type === "delivery" || event.type === "status") onSignal();
+      if (showcase && event.type === "status" && TERMINAL.includes(String(event.data.status))) source.close();
     };
     const types = ["status", "user_message", "model_text", "tool_call", "tool_result", "diff", "delivery", "outcome", "error"];
     for (const t of types) source.addEventListener(t, onMessage as EventListener);
     return () => source.close();
-  }, [runId, onSignal]);
+  }, [runId, onSignal, pace, showcase]);
 
   const ordered = useMemo(() => [...events.values()].sort((a, b) => a.seq - b.seq), [events]);
   return { ordered, connected };
 }
 
-function FollowUp({ runId, onSent }: { runId: string; onSent: () => void }) {
+function FollowUp({ runId, onSent, showcase }: { runId: string; onSent: () => void; showcase: boolean }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (showcase) return setError(SHOWCASE_REFUSAL);
     try {
       await api.followUp(runId, message);
       setMessage("");
@@ -65,6 +74,7 @@ function FollowUp({ runId, onSent }: { runId: string; onSent: () => void }) {
 
 export function RunView({ runId, onBack, showcase }: { runId: string; onBack: () => void; showcase: boolean }) {
   const [detail, setDetail] = useState<RunDetail | null>(null);
+  const [pace, setPace] = useState<Pace>("recorded");
   const [missing, setMissing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -80,7 +90,7 @@ export function RunView({ runId, onBack, showcase }: { runId: string; onBack: ()
     void refresh();
   }, [refresh]);
 
-  const { ordered, connected } = useRunEvents(runId, refresh);
+  const { ordered, connected } = useRunEvents(runId, refresh, pace, showcase);
   const items = useMemo(() => buildTimeline(ordered), [ordered]);
   const latestDiff = [...ordered].reverse().find((e) => e.type === "diff")?.data.diff as string | undefined;
 
@@ -128,9 +138,16 @@ export function RunView({ runId, onBack, showcase }: { runId: string; onBack: ()
             <h2 id="timeline-title">Timeline</h2>
             <span className={`stream ${connected ? "is-live" : ""}`}>{connected ? (showcase ? "replaying" : "live") : "reconnecting"}</span>
           </div>
+          {showcase && (
+            <div className="pace" role="group" aria-label="Replay speed">
+              <span className="muted">Replay speed</span>
+              <button type="button" aria-pressed={pace === "recorded"} onClick={() => setPace("recorded")}>Recorded pace</button>
+              <button type="button" aria-pressed={pace === "slow"} onClick={() => setPace("slow")}>Slowed 4x, same order</button>
+            </div>
+          )}
           <Timeline items={items} connected={connected} />
           {canFollowUp ? (
-            <FollowUp runId={run.id} onSent={refresh} />
+            <FollowUp runId={run.id} onSent={refresh} showcase={showcase} />
           ) : !active && !run.hasSandbox && !showcase ? (
             <p className="muted">The sandbox for this run was cleaned up. Start a new run to continue this work.</p>
           ) : null}

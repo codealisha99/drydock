@@ -59,6 +59,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return body;
 }
 
+/** Shown in showcase mode instead of sending a write the hosted copy would refuse. Matches the server's 403 text. */
+export const SHOWCASE_REFUSAL = "showcase mode: run it locally to start real runs";
+
 export const api = {
   health: () => request<{ ok: boolean; mode: "live" | "showcase" }>("/api/health"),
   listRuns: () => request<{ runs: Run[] }>("/api/runs"),
