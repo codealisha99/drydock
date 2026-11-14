@@ -1,5 +1,7 @@
 # drydock
 
+[![ci](https://github.com/codealisha99/drydock/actions/workflows/ci.yml/badge.svg)](https://github.com/codealisha99/drydock/actions/workflows/ci.yml)
+
 **Live demo:** https://drydock-demo-opal.vercel.app (read-only replay of three recorded runs on Vercel; writes and git return 403)
 **Landing page:** https://drydock-site-two.vercel.app
 
