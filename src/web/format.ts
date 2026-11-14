@@ -9,19 +9,21 @@ export const STATUS_LABEL: Record<RunStatus, string> = {
   cancelled: "cancelled",
 };
 
-export function ago(iso: string, now = Date.now()): string {
-  const s = Math.max(0, Math.round((now - Date.parse(iso)) / 1000));
-  if (s < 60) return `${s}s ago`;
-  const m = Math.round(s / 60);
-  if (m < 60) return `${m}m ago`;
-  const h = Math.round(m / 60);
-  if (h < 48) return `${h}h ago`;
-  return `${Math.round(h / 24)}d ago`;
+/** A recorded or started time as a fixed UTC date: "14 Nov 2026, 20:04 UTC". Never relative, so recordings read correctly. */
+export function formatRecorded(iso: string): string {
+  const text = new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
+  return `${text} UTC`;
 }
 
-export function firstLine(text: string, max = 96): string {
-  const line = text.split("\n")[0] ?? "";
-  return line.length > max ? `${line.slice(0, max - 1)}…` : line;
+/** "4.1s" under a minute, "1m 04s" above. */
+export function formatDuration(ms: number): string {
+  if (ms < 60_000) return `${(ms / 1000).toFixed(1)}s`;
+  const s = Math.round(ms / 1000);
+  return `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, "0")}s`;
+}
+
+export function firstLine(text: string): string {
+  return text.split("\n")[0] ?? "";
 }
 
 export function shortRepo(repo: string): string {

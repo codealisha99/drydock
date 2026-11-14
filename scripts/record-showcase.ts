@@ -15,7 +15,9 @@ const RECORD_DIR = path.join(ROOT, ".demo", "showcase");
 const SEED_OUT = path.join(ROOT, "showcase", "seed.json");
 const API = "http://127.0.0.1:4100";
 const IMAGE = "drydock-sandbox:latest";
-const CALC_TASK = "add() in src/math.js subtracts instead of adding, so the test suite fails. Fix it and make the tests pass.";
+const CALC_FIX_TASK = "add() in src/math.js subtracts instead of adding, so the test suite fails. Fix it and make the tests pass.";
+const CALC_ASK_TASK = "The add() test fails. Make it pass, and ask me first if two fixes are equally valid.";
+const CALC_GIVEUP_TASK = "The add() test fails. Fix it, or say plainly why you cannot.";
 const LEDGER_FIX_TASK = "Cart totals, money formatting and bill splitting are wrong, and the test suite fails. Fix all three so every test passes.";
 const LEDGER_CLARIFY_TASK = "Bill splitting and cart totals look wrong, and the test suite fails. Get the suite passing.";
 
@@ -31,9 +33,9 @@ interface Scenario {
 
 /** Each scenario, the outcome its script must reach, and any follow-up that continues the run. */
 const SCENARIOS: readonly Scenario[] = [
-  { script: "fix-failing-test", fixture: "calc", task: CALC_TASK, expected: "succeeded" },
-  { script: "needs-input", fixture: "calc", task: CALC_TASK, expected: "needs_input" },
-  { script: "cannot-fix", fixture: "calc", task: CALC_TASK, expected: "failed" },
+  { script: "fix-failing-test", fixture: "calc", task: CALC_FIX_TASK, expected: "succeeded" },
+  { script: "needs-input", fixture: "calc", task: CALC_ASK_TASK, expected: "needs_input" },
+  { script: "cannot-fix", fixture: "calc", task: CALC_GIVEUP_TASK, expected: "failed" },
   { script: "multi-file-fix", fixture: "ledger", task: LEDGER_FIX_TASK, expected: "succeeded" },
   {
     script: "clarify-then-fix",

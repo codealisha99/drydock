@@ -1,7 +1,27 @@
 export type RunStatus = "queued" | "running" | "needs_input" | "succeeded" | "failed" | "cancelled";
 
+export interface TestTotals {
+  pass: number;
+  fail: number;
+}
+
+/** Per-run facts computed on the server from the run's events (src/shared/run-facts.ts). */
+export interface RunFacts {
+  events: number;
+  steps: number;
+  testRuns: number;
+  testsBefore: TestTotals | null;
+  testsAfter: TestTotals | null;
+  filesChanged: number;
+  added: number;
+  removed: number;
+  followUps: number;
+  durationMs: number;
+}
+
 export interface Run {
   id: string;
+  facts: RunFacts;
   repo: string;
   baseBranch: string;
   workBranch: string;

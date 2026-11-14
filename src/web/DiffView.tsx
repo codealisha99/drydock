@@ -66,7 +66,8 @@ export function parseDiff(diff: string): FileDiff[] {
   return files;
 }
 
-const SIGN: Record<DiffRowKind, string> = { hunk: "", context: " ", add: "+", del: "−" };
+const SIGN: Record<DiffRowKind, string> = { hunk: "", context: "", add: "+", del: "−" };
+const SIGN_LABEL: Record<DiffRowKind, string> = { hunk: "", context: "", add: "added", del: "removed" };
 
 function Code({ tokens }: { tokens: Token[] }) {
   return (
@@ -76,6 +77,7 @@ function Code({ tokens }: { tokens: Token[] }) {
   );
 }
 
+/** One file: header with counts, then a table with two line-number gutters, a sign column and wrapped code. */
 function FileSection({ file }: { file: FileDiff }) {
   return (
     <details className="diff-file" open>
@@ -86,28 +88,30 @@ function FileSection({ file }: { file: FileDiff }) {
           <span className="del">−{file.removed}</span>
         </span>
       </summary>
-      <div className="diff-scroll" tabIndex={0} aria-label={`Changes in ${file.path}`}>
-        <table className="diff-table">
-          <tbody>
-            {file.rows.map((row, i) =>
-              row.kind === "hunk" ? (
-                <tr key={i} className="diff-row hunk">
-                  <td className="gutter" colSpan={2} />
-                  <td className="sign" />
-                  <td className="code">{row.text}</td>
-                </tr>
-              ) : (
-                <tr key={i} className={`diff-row ${row.kind}`}>
-                  <td className="gutter">{row.oldNo ?? ""}</td>
-                  <td className="gutter">{row.newNo ?? ""}</td>
-                  <td className="sign" aria-label={row.kind === "add" ? "added" : row.kind === "del" ? "removed" : undefined}>{SIGN[row.kind]}</td>
-                  <td className="code"><Code tokens={tokenizeCode(row.text)} /></td>
-                </tr>
-              ),
-            )}
-          </tbody>
-        </table>
-      </div>
+      <table className="diff-table">
+        <colgroup>
+          <col className="col-gutter" />
+          <col className="col-gutter" />
+          <col className="col-sign" />
+          <col />
+        </colgroup>
+        <tbody>
+          {file.rows.map((row, i) =>
+            row.kind === "hunk" ? (
+              <tr key={i} className="diff-row hunk">
+                <td colSpan={4} className="hunk-text">{row.text}</td>
+              </tr>
+            ) : (
+              <tr key={i} className={`diff-row ${row.kind}`}>
+                <td className="gutter" aria-hidden="true">{row.oldNo ?? ""}</td>
+                <td className="gutter" aria-hidden="true">{row.newNo ?? ""}</td>
+                <td className="sign" aria-label={SIGN_LABEL[row.kind] || undefined}>{SIGN[row.kind]}</td>
+                <td className="code"><Code tokens={tokenizeCode(row.text)} /></td>
+              </tr>
+            ),
+          )}
+        </tbody>
+      </table>
     </details>
   );
 }

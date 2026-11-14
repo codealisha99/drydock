@@ -1,6 +1,6 @@
-/* Generated from showcase/seed.json, run e65d6c98e21a (the multi-file fix). Every line is a recorded event. */
+/* Generated from showcase/seed.json, run b7c6e4f58254 (the multi-file fix). Every line is a recorded event. */
 window.DRYDOCK_RUN_LOG = {
-  runId: "e65d6c98e21a",
+  runId: "b7c6e4f58254",
   events: [
     {
       "t": "0.00",
@@ -15,151 +15,151 @@ window.DRYDOCK_RUN_LOG = {
       "text": "running"
     },
     {
-      "t": "0.86",
+      "t": "0.54",
       "k": "sys",
       "label": "status",
       "text": "workspace ready"
     },
     {
-      "t": "0.86",
+      "t": "0.54",
       "k": "agent",
       "label": "agent",
       "text": "Running the suite before I touch anything."
     },
     {
-      "t": "0.86",
+      "t": "0.54",
       "k": "tool",
       "label": "bash",
       "text": "node --test"
     },
     {
-      "t": "1.18",
+      "t": "0.74",
       "k": "err",
       "label": "result",
       "text": "3 failing · 2 pass"
     },
     {
-      "t": "1.18",
+      "t": "0.74",
       "k": "agent",
       "label": "agent",
       "text": "Three failures across cart, format and split. Starting with the cart total, since the others depend on it."
     },
     {
-      "t": "1.18",
+      "t": "0.74",
       "k": "tool",
       "label": "read_file",
       "text": "src/cart.js"
     },
     {
-      "t": "1.33",
+      "t": "0.79",
       "k": "agent",
       "label": "agent",
       "text": "The discount is applied after tax. Moving it ahead of the tax calculation."
     },
     {
-      "t": "1.33",
+      "t": "0.79",
       "k": "tool",
       "label": "edit_file",
       "text": "src/cart.js"
     },
     {
-      "t": "1.53",
+      "t": "0.93",
       "k": "agent",
       "label": "agent",
       "text": "Re-running. The cart test should pass now; two failures remain."
     },
     {
-      "t": "1.53",
+      "t": "0.93",
       "k": "tool",
       "label": "bash",
       "text": "node --test"
     },
     {
-      "t": "1.85",
+      "t": "1.15",
       "k": "err",
       "label": "result",
       "text": "2 failing · 3 pass"
     },
     {
-      "t": "1.86",
+      "t": "1.15",
       "k": "agent",
       "label": "agent",
       "text": "formatMoney drops the pence. Reading it before I change it."
     },
     {
-      "t": "1.86",
+      "t": "1.15",
       "k": "tool",
       "label": "read_file",
       "text": "src/format.js"
     },
     {
-      "t": "1.94",
+      "t": "1.22",
       "k": "agent",
       "label": "agent",
       "text": "toFixed(0) rounds to whole dollars. Showing two decimals."
     },
     {
-      "t": "1.94",
+      "t": "1.22",
       "k": "tool",
       "label": "edit_file",
       "text": "src/format.js"
     },
     {
-      "t": "2.20",
+      "t": "1.35",
       "k": "agent",
       "label": "agent",
       "text": "One failure left, in splitEvenly. Reading it."
     },
     {
-      "t": "2.20",
+      "t": "1.35",
       "k": "tool",
       "label": "read_file",
       "text": "src/split.js"
     },
     {
-      "t": "2.34",
+      "t": "1.43",
       "k": "agent",
       "label": "agent",
       "text": "The remainder is dropped, so splitEvenly(10, 3) returns [3, 3, 3]. The first shares should take the extra pence."
     },
     {
-      "t": "2.34",
+      "t": "1.43",
       "k": "tool",
       "label": "edit_file",
       "text": "src/split.js"
     },
     {
-      "t": "2.60",
+      "t": "1.55",
       "k": "agent",
       "label": "agent",
       "text": "Running the full suite."
     },
     {
-      "t": "2.60",
+      "t": "1.55",
       "k": "tool",
       "label": "bash",
       "text": "node --test"
     },
     {
-      "t": "2.97",
+      "t": "1.72",
       "k": "ok",
       "label": "result",
       "text": "all passing · 5 pass"
     },
     {
-      "t": "3.28",
+      "t": "1.88",
       "k": "sys",
       "label": "diff",
       "text": "3 files, +5 −4"
     },
     {
-      "t": "4.12",
+      "t": "2.32",
       "k": "sys",
       "label": "deliver",
-      "text": "branch drydock/run-e65d6c98e21a to the local remote"
+      "text": "branch drydock/run-b7c6e4f58254 to the local remote"
     },
     {
-      "t": "4.12",
+      "t": "2.32",
       "k": "out",
       "label": "outcome",
       "text": "succeeded"
