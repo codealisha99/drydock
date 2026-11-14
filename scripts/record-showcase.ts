@@ -15,28 +15,48 @@ const RECORD_DIR = path.join(ROOT, ".demo", "showcase");
 const SEED_OUT = path.join(ROOT, "showcase", "seed.json");
 const API = "http://127.0.0.1:4100";
 const IMAGE = "drydock-sandbox:latest";
-const TASK = "add() in src/math.js subtracts instead of adding, so the test suite fails. Fix it and make the tests pass.";
+const CALC_TASK = "add() in src/math.js subtracts instead of adding, so the test suite fails. Fix it and make the tests pass.";
+const LEDGER_FIX_TASK = "Cart totals, money formatting and bill splitting are wrong, and the test suite fails. Fix all three so every test passes.";
+const LEDGER_CLARIFY_TASK = "Bill splitting and cart totals look wrong, and the test suite fails. Get the suite passing.";
 
-/** Each scenario and the outcome its script must reach. */
-const SCENARIOS = [
-  { script: "fix-failing-test", expected: "succeeded" },
-  { script: "needs-input", expected: "needs_input" },
-  { script: "cannot-fix", expected: "failed" },
-] as const;
+interface Scenario {
+  script: string;
+  /** Directory under fixtures/ that seeds the repository. */
+  fixture: "calc" | "ledger";
+  task: string;
+  expected: string;
+  /** Sent after the first outcome, in the same run, to continue it on the same sandbox. */
+  followUp?: { message: string; expected: string };
+}
+
+/** Each scenario, the outcome its script must reach, and any follow-up that continues the run. */
+const SCENARIOS: readonly Scenario[] = [
+  { script: "fix-failing-test", fixture: "calc", task: CALC_TASK, expected: "succeeded" },
+  { script: "needs-input", fixture: "calc", task: CALC_TASK, expected: "needs_input" },
+  { script: "cannot-fix", fixture: "calc", task: CALC_TASK, expected: "failed" },
+  { script: "multi-file-fix", fixture: "ledger", task: LEDGER_FIX_TASK, expected: "succeeded" },
+  {
+    script: "clarify-then-fix",
+    fixture: "ledger",
+    task: LEDGER_CLARIFY_TASK,
+    expected: "needs_input",
+    followUp: { message: "Follow the test: the first shares take the remainder. Fix the other two bugs too.", expected: "succeeded" },
+  },
+];
 
 const log = (msg: string) => console.log(`\x1b[2m[record]\x1b[0m ${msg}`);
 const git = (args: string[], cwd: string) =>
   execFileSync("git", ["-c", "user.name=demo", "-c", "user.email=demo@example.invalid", ...args], { cwd, encoding: "utf8" }).trim();
 
-function seedBareRemote(dir: string): string {
+function seedBareRemote(dir: string, fixture: string): string {
   rmSync(dir, { recursive: true, force: true });
   const seed = path.join(dir, "seed");
   mkdirSync(seed, { recursive: true });
-  cpSync(path.join(ROOT, "fixtures/calc"), seed, { recursive: true });
+  cpSync(path.join(ROOT, "fixtures", fixture), seed, { recursive: true });
   git(["init", "-q", "-b", "main"], seed);
   git(["add", "-A"], seed);
-  git(["commit", "-q", "-m", "calc: initial project (add() is broken)"], seed);
-  const bare = path.join(dir, "origin", "calc.git");
+  git(["commit", "-q", "-m", `${fixture}: initial project (has bugs)`], seed);
+  const bare = path.join(dir, "origin", `${fixture}.git`);
   mkdirSync(path.dirname(bare), { recursive: true });
   git(["clone", "-q", "--bare", seed, bare], dir);
   return bare;
@@ -72,8 +92,9 @@ async function stopServer(child: ChildProcess): Promise<void> {
 }
 
 /** Runs one scenario end to end and returns the run id. */
-async function record(script: string, expected: string, dir: string): Promise<string> {
-  const bare = seedBareRemote(dir);
+async function record(scenario: Scenario, dir: string): Promise<string> {
+  const { script, fixture, task, expected, followUp } = scenario;
+  const bare = seedBareRemote(dir, fixture);
   const server = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "--import", "tsx", "src/server/index.ts"], {
     cwd: ROOT,
     env: { ...process.env, DRYDOCK_DATA_DIR: path.join(dir, "data"), DRYDOCK_MODEL_PROVIDER: "scripted", DRYDOCK_SCRIPT: script, DRYDOCK_MODE: "live" },
@@ -84,13 +105,24 @@ async function record(script: string, expected: string, dir: string): Promise<st
     const created = await fetch(`${API}/api/runs`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ repo: bare, branch: "main", instruction: TASK, delivery: "local" }),
+      body: JSON.stringify({ repo: bare, branch: "main", instruction: task, delivery: "local" }),
     });
     if (!created.ok) throw new Error(`create run returned HTTP ${created.status}: ${await created.text()}`);
     const { run } = (await created.json()) as { run: { id: string } };
     const status = await waitForOutcome(run.id);
     if (status !== expected) throw new Error(`scenario ${script} ended as ${status}, expected ${expected}`);
     log(`${script}: run ${run.id} ended as ${status}`);
+    if (followUp) {
+      const sent = await fetch(`${API}/api/runs/${run.id}/messages`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ message: followUp.message }),
+      });
+      if (!sent.ok) throw new Error(`follow-up returned HTTP ${sent.status}: ${await sent.text()}`);
+      const after = await waitForOutcome(run.id);
+      if (after !== followUp.expected) throw new Error(`scenario ${script} follow-up ended as ${after}, expected ${followUp.expected}`);
+      log(`${script}: follow-up ended as ${after}`);
+    }
     return run.id;
   } finally {
     await stopServer(server);
@@ -128,12 +160,12 @@ async function main(): Promise<void> {
   }
   rmSync(RECORD_DIR, { recursive: true, force: true });
   const seed = { format: 1, recordedAt: new Date().toISOString(), source: "pnpm record:showcase", runs: [] as unknown[], events: [] as unknown[], pullRequests: [] as unknown[] };
-  for (const { script, expected } of SCENARIOS) {
-    const dir = path.join(RECORD_DIR, script);
-    const runId = await record(script, expected, dir);
+  for (const scenario of SCENARIOS) {
+    const dir = path.join(RECORD_DIR, scenario.script);
+    const runId = await record(scenario, dir);
     const hostPaths = [dir, path.join(ROOT, ".demo"), ROOT, os.homedir()];
     // The bare repo is the recorded run's "repository": label it as the demo repo, not as a host path.
-    const repoLabel = [`${path.join(dir, "origin", "calc.git")}`, "demo/calc.git"] as const;
+    const repoLabel = [`${path.join(dir, "origin", `${scenario.fixture}.git`)}`, `demo/${scenario.fixture}.git`] as const;
     const part = exportRun(path.join(dir, "data", "drydock.sqlite"), runId, hostPaths, repoLabel);
     seed.runs.push(...part.runs);
     seed.events.push(...part.events);

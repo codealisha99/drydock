@@ -154,9 +154,11 @@ describe("showcase building blocks", () => {
     expect(() => parseSeed({ format: 2 })).toThrow();
   });
 
-  it("the committed seed has all three outcomes and leaks no host paths", () => {
+  it("the committed seed has every outcome, a follow-up run and leaks no host paths", () => {
     const seed = parseSeed(JSON.parse(readFileSync(SEED_PATH, "utf8")));
-    expect(seed.runs.map((r) => r.status).sort()).toEqual(["failed", "needs_input", "succeeded"]);
+    expect(seed.runs.map((r) => r.status).sort()).toEqual(["failed", "needs_input", "succeeded", "succeeded", "succeeded"]);
+    const withFollowUp = seed.runs.filter((r) => seed.events.some((e) => e.run_id === r.id && e.type === "user_message"));
+    expect(withFollowUp).toHaveLength(1);
     const raw = JSON.stringify(seed);
     expect(raw).not.toMatch(/\/Users\//);
     expect(raw).not.toMatch(/\.demo\//);
