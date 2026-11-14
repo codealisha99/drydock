@@ -37,7 +37,13 @@ function miniSeed(): SeedFile {
   };
 }
 
-async function readFrames(url: string): Promise<{ type: string; seq: number; at: number }[]> {
+/** Every frame of a replay, including the closing done frame. */
+/** Event frames only: the closing done frame is left out. */
+async function readFrames(url: string) {
+  return (await readAllFrames(url)).filter((f) => f.type !== "done");
+}
+
+async function readAllFrames(url: string): Promise<{ type: string; seq: number; at: number }[]> {
   const res = await fetch(url);
   const reader = res.body!.getReader();
   const decoder = new TextDecoder();
@@ -188,3 +194,39 @@ describe("showcase building blocks", () => {
   });
 });
 
+
+describe("showcase replay of a multi-turn run", () => {
+  const base = Date.parse("2026-01-01T00:00:00.000Z");
+  const at = (ms: number) => new Date(base + ms).toISOString();
+  const TURNS = "clarify0000";
+
+  it("streams every turn's events in order, then a done frame, so the client does not stop at needs_input", async () => {
+    const seed = miniSeed();
+    const ev = (seq: number, type: string, data: unknown, ms: number) => ({ run_id: TURNS, seq, type, data, created_at: at(ms) });
+    seed.runs.push({ ...seed.runs[1]!, id: TURNS, status: "succeeded", summary: "done" });
+    seed.events.push(
+      ev(1, "status", { status: "running" }, 0),
+      ev(2, "tool_call", { id: "t1", name: "bash", input: { command: "node --test" } }, 10),
+      ev(3, "tool_result", { id: "t1", name: "bash", output: "# pass 3\n# fail 2", isError: true }, 20),
+      ev(4, "status", { status: "needs_input" }, 30),
+      ev(5, "outcome", { status: "needs_input", summary: "Which convention wins?" }, 30),
+      ev(6, "user_message", { text: "The first shares take the remainder." }, 40),
+      ev(7, "tool_call", { id: "t2", name: "bash", input: { command: "node --test" } }, 50),
+      ev(8, "tool_result", { id: "t2", name: "bash", output: "# pass 5\n# fail 0", isError: false }, 60),
+      ev(9, "status", { status: "succeeded" }, 70),
+      ev(10, "outcome", { status: "succeeded", summary: "All 5 tests pass." }, 70),
+    );
+    const listener2 = await listenEphemeral();
+    listener2.setHandler(createShowcaseApp(seed).fetch);
+    try {
+      const frames = await readAllFrames(`http://127.0.0.1:${listener2.port}/api/runs/${TURNS}/events?after=0`);
+      expect(frames.map((f) => f.type)).toEqual([
+        "status", "tool_call", "tool_result", "status", "outcome",
+        "user_message", "tool_call", "tool_result", "status", "outcome", "done",
+      ]);
+      expect(frames.slice(0, 10).map((f) => f.seq)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    } finally {
+      await listener2.close();
+    }
+  });
+});

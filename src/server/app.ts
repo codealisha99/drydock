@@ -8,6 +8,7 @@ import type { Engine } from "./engine";
 import { serveGitHttp } from "./git/http";
 import { ZodError } from "zod";
 import { sseFrame, toRunDto } from "./read-model";
+import { summarizeRun } from "../shared/run-facts";
 
 const HEARTBEAT_MS = 15_000;
 
@@ -27,9 +28,11 @@ export function createApp(engine: Engine, cfg: Config) {
 
   app.get("/api/health", (c) => c.json({ ok: true, mode: cfg.mode, queue: engine.queueStats() }));
 
-  app.get("/api/runs", (c) => c.json({ runs: engine.store.listRuns().map(toRunDto) }));
+  // ponytail: facts are recomputed from events on each list poll; cache per run if lists grow large.
+  const withFacts = (run: RunRow) => ({ ...toRunDto(run), facts: summarizeRun(engine.events.list(run.id, 0)) });
+  app.get("/api/runs", (c) => c.json({ runs: engine.store.listRuns().map(withFacts) }));
 
-  app.get("/api/inbox", (c) => c.json({ runs: engine.store.inbox().map(toRunDto) }));
+  app.get("/api/inbox", (c) => c.json({ runs: engine.store.inbox().map(withFacts) }));
 
   app.post("/api/runs", async (c) => {
     const body = await readJson(c);
@@ -52,7 +55,7 @@ export function createApp(engine: Engine, cfg: Config) {
       diff: pr.diff,
       createdAt: pr.created_at,
     }));
-    return c.json({ run: toRunDto(run), latestDiff, pullRequests });
+    return c.json({ run: withFacts(run), latestDiff, pullRequests });
   });
 
   app.post("/api/runs/:id/cancel", (c) => c.json({ run: toRunDto(engine.cancelRun(c.req.param("id"))) }));

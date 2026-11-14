@@ -4,6 +4,7 @@ import { z } from "zod";
 import type { PullRequestRow, RunRow } from "./db";
 import type { RunEvent } from "./events";
 import { sseFrame, toPullRequestDto, toRunDto } from "./read-model.js";
+import { summarizeRun } from "../shared/run-facts";
 
 /** The message every refused request returns in showcase mode; the UI shows it verbatim. */
 export const SHOWCASE_MESSAGE = "showcase mode: run it locally to start real runs";
@@ -115,8 +116,9 @@ export function createShowcaseApp(seed: SeedFile) {
   });
 
   app.get("/api/health", (c) => c.json({ ok: true, mode: "showcase" }));
-  app.get("/api/runs", (c) => c.json({ runs: runs.map(toRunDto) }));
-  app.get("/api/inbox", (c) => c.json({ runs: runs.filter((r) => INBOX.includes(r.status)).map(toRunDto) }));
+  const runDto = (run: RunRow) => ({ ...toRunDto(run), facts: summarizeRun(eventsByRun.get(run.id) ?? []) });
+  app.get("/api/runs", (c) => c.json({ runs: runs.map(runDto) }));
+  app.get("/api/inbox", (c) => c.json({ runs: runs.filter((r) => INBOX.includes(r.status)).map(runDto) }));
 
   app.get("/api/runs/:id", (c) => {
     const run = runById.get(c.req.param("id"));
@@ -124,7 +126,7 @@ export function createShowcaseApp(seed: SeedFile) {
     const diffs = (eventsByRun.get(run.id) ?? []).filter((e) => e.type === "diff");
     const latestDiff = (diffs.at(-1)?.data as { diff: string; baseSha: string; headSha: string } | undefined) ?? null;
     const pullRequests = (prsByRun.get(run.id) ?? []).map(toPullRequestDto);
-    return c.json({ run: toRunDto(run), latestDiff, pullRequests });
+    return c.json({ run: runDto(run), latestDiff, pullRequests });
   });
 
   app.get("/api/runs/:id/events", (c) => {
@@ -138,12 +140,15 @@ export function createShowcaseApp(seed: SeedFile) {
     return streamSSE(c, async (stream) => {
       activeReplays += 1;
       try {
-        // Replays the recorded events in order with their recorded gaps (times SLOW_FACTOR when slowed), then ends.
+        // Replays the recorded events in order with their recorded gaps (times SLOW_FACTOR when slowed).
+        // Every turn of the run is in the recording, so the stream only ends at the end of the whole run.
         for (const { event, delayMs } of pending) {
           if (delayMs > 0) await sleep(delayMs * factor);
           if (stream.aborted) return;
           await stream.writeSSE(sseFrame(runId, event));
         }
+        // The client closes on this frame. Without it, EventSource would reconnect and replay from the start.
+        if (!stream.aborted) await stream.writeSSE({ event: "done", data: JSON.stringify({ runId, type: "done" }) });
       } finally {
         activeReplays -= 1;
       }

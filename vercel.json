@@ -23,6 +23,10 @@
     {
       "source": "/git/:path*",
       "destination": "/api/index?__path=git/:path*"
+    },
+    {
+      "source": "/((?!api/|git/).*)",
+      "destination": "/index.html"
     }
   ]
 }
