@@ -121,6 +121,23 @@ describe("engine pipeline with real git over HTTP (host-directory sandbox)", () 
     expect(h.engine.events.list(run.id, 0).some((e) => e.type === "user_message")).toBe(true);
   });
 
+  it("keeps a follow-up that adds no new changes succeeded instead of failing delivery", async () => {
+    h = await harness(() => scriptedModel(SCRIPTS["fix-failing-test"]!));
+    const run = h.engine.createRun({ repo: h.bare, branch: "main", instruction: "Fix add() so the tests pass", delivery: "local" });
+    await waitFor(() => (TERMINAL.includes(h.engine.store.getRun(run.id)!.status) ? true : undefined));
+    expect(h.engine.store.getRun(run.id)!.status).toBe("succeeded");
+
+    // The replayed script makes no new change on this turn; the run already has a delivered commit.
+    h.engine.sendMessage(run.id, "Double-check the result and confirm.");
+    const after = await waitFor(() => {
+      const r = h.engine.store.getRun(run.id)!;
+      return TERMINAL.includes(r.status) && h.engine.events.list(run.id, 0).some((e) => e.type === "user_message") ? r : undefined;
+    });
+    expect(after.status).toBe("succeeded");
+    expect(after.summary).not.toContain("nothing to deliver");
+    expect(h.engine.store.pullRequests(run.id)).toHaveLength(1);
+  });
+
   it("cancels a running run and removes its sandbox", async () => {
     const hanging: ModelClient = {
       complete: (_req, signal) =>

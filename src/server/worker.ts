@@ -61,6 +61,8 @@ async function finalize(d: WorkerDeps, run: RunRow, sandbox: Sandbox, outcome: O
   const title = `drydock: ${firstLine(run.instruction, 72)}`;
   const body = `${outcome.summary}\n\nRun: ${run.id}\n\n${run.instruction}`;
   const patch = await patchSince(sandbox, run.delivered_sha ?? baseSha, { signal });
+  // The diff above is cumulative; a follow-up may add nothing new since the last delivery.
+  if (!patch.trim()) return outcome;
   const result = await (d.deliver ?? deliverBranch)(targetFor(d, run), {
     workBranch: run.work_branch,
     baseBranch: run.base_branch,
