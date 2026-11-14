@@ -1,0 +1,28 @@
+{
+  "buildCommand": "pnpm exec vite build",
+  "outputDirectory": "dist/web",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index?__path=:path*"
+    },
+    {
+      "source": "/git",
+      "destination": "/api/index?__path=git"
+    },
+    {
+      "source": "/git/",
+      "destination": "/api/index?__path=git"
+    },
+    {
+      "source": "/git/:path*",
+      "destination": "/api/index?__path=git/:path*"
+    }
+  ]
+}
