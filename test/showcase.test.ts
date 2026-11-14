@@ -151,6 +151,10 @@ describe("showcase mode", () => {
     expect(calls).toEqual([]);
   });
 
+  it("reports its mode so the UI can say so", async () => {
+    expect(await (await fetch(`${base}/api/health`)).json()).toMatchObject({ ok: true, mode: "showcase" });
+  });
+
   it("serves recorded runs and their detail read-only", async () => {
     const list = (await (await fetch(`${base}/api/runs`)).json()) as { runs: { id: string; status: string; hasSandbox: boolean }[] };
     expect(list.runs).toEqual([expect.objectContaining({ id: RUN, status: "succeeded", hasSandbox: false })]);

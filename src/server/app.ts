@@ -62,7 +62,7 @@ export function createApp(engine: Engine, cfg: Config) {
     return run;
   };
 
-  app.get("/api/health", (c) => c.json({ ok: true, queue: engine.queueStats() }));
+  app.get("/api/health", (c) => c.json({ ok: true, mode: cfg.mode, queue: engine.queueStats() }));
 
   app.get("/api/runs", (c) => c.json({ runs: engine.store.listRuns().map(toRunDto) }));
 

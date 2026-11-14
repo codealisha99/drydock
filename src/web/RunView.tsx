@@ -63,7 +63,7 @@ function FollowUp({ runId, onSent }: { runId: string; onSent: () => void }) {
   );
 }
 
-export function RunView({ runId, onBack }: { runId: string; onBack: () => void }) {
+export function RunView({ runId, onBack, showcase }: { runId: string; onBack: () => void; showcase: boolean }) {
   const [detail, setDetail] = useState<RunDetail | null>(null);
   const [missing, setMissing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -88,7 +88,8 @@ export function RunView({ runId, onBack }: { runId: string; onBack: () => void }
   if (!detail) return <p className="muted">Loading run…</p>;
   const { run, pullRequests } = detail;
   const active = (ACTIVE as readonly string[]).includes(run.status);
-  const canFollowUp = !active && run.hasSandbox;
+  // In showcase mode the follow-up form stays visible so the refusal message is shown where the user acts.
+  const canFollowUp = !active && (run.hasSandbox || showcase);
 
   const cancel = async () => {
     setActionError(null);
@@ -125,12 +126,12 @@ export function RunView({ runId, onBack }: { runId: string; onBack: () => void }
         <section className="run-timeline" aria-labelledby="timeline-title">
           <div className="section-head">
             <h2 id="timeline-title">Timeline</h2>
-            <span className={`stream ${connected ? "is-live" : ""}`}>{connected ? "live" : "reconnecting"}</span>
+            <span className={`stream ${connected ? "is-live" : ""}`}>{connected ? (showcase ? "replaying" : "live") : "reconnecting"}</span>
           </div>
           <Timeline items={items} connected={connected} />
           {canFollowUp ? (
             <FollowUp runId={run.id} onSent={refresh} />
-          ) : !active && !run.hasSandbox ? (
+          ) : !active && !run.hasSandbox && !showcase ? (
             <p className="muted">The sandbox for this run was cleaned up. Start a new run to continue this work.</p>
           ) : null}
         </section>

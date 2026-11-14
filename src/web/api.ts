@@ -60,6 +60,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  health: () => request<{ ok: boolean; mode: "live" | "showcase" }>("/api/health"),
   listRuns: () => request<{ runs: Run[] }>("/api/runs"),
   inbox: () => request<{ runs: Run[] }>("/api/inbox"),
   getRun: (id: string) => request<RunDetail>(`/api/runs/${id}`),

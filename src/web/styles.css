@@ -164,11 +164,28 @@ textarea { resize: vertical; font-family: var(--sans); }
 .diff-line.del { background: #f6e3e3; color: #7a1d21; }
 .diff-line.hunk { color: var(--muted); background: var(--panel); }
 
+.showcase-note { padding: 8px 24px; background: #fbeee6; border-bottom: 1px solid #ecc9b3; color: var(--ink-2); font-size: 13px; }
+
 /* narrow screens */
 @media (max-width: 960px) {
   .home, .run-body { grid-template-columns: 1fr; }
   .run-meta { grid-template-columns: repeat(2, minmax(0, auto)); }
   .content { padding: 16px; }
+}
+
+@media (max-width: 640px) {
+  .topbar { flex-wrap: wrap; gap: 2px 12px; padding: 10px 16px; }
+  .showcase-note { padding: 8px 16px; }
+  /* Ledger rows become stacked cards so the table never forces horizontal scrolling. */
+  .ledger thead { display: none; }
+  .ledger, .ledger tbody, .ledger tr, .ledger td { display: block; width: 100%; }
+  .ledger tr { padding: 10px 12px; border-bottom: 1px solid var(--rule-soft); }
+  .ledger tr:last-child { border-bottom: 0; }
+  .ledger td { padding: 2px 0; border: 0; }
+  .ledger td.mono { white-space: normal; }
+  .ledger td:nth-child(1) { margin-bottom: 4px; }
+  .run-meta { grid-template-columns: minmax(0, 1fr); }
+  .form-row { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (prefers-reduced-motion: reduce) {

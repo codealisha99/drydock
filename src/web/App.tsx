@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { api } from "./api";
 import { HomeView } from "./HomeView";
 import { RunView } from "./RunView";
 
@@ -11,6 +12,11 @@ function parseHash(hash: string): Route {
 
 export function App() {
   const [route, setRoute] = useState<Route>(() => parseHash(window.location.hash));
+  const [showcase, setShowcase] = useState(false);
+
+  useEffect(() => {
+    api.health().then((h) => setShowcase(h.mode === "showcase")).catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     const onHash = () => setRoute(parseHash(window.location.hash));
@@ -31,8 +37,13 @@ export function App() {
         <a href="#/" className="brand" onClick={goHome}>drydock</a>
         <span className="topbar-note">Background coding agents, one sandbox per run</span>
       </header>
+      {showcase && (
+        <p className="showcase-note" role="note">
+          Showcase: this hosted copy replays recorded runs and cannot start new ones. Run it locally to start real runs.
+        </p>
+      )}
       <main className="content">
-        {route.name === "home" ? <HomeView onOpen={openRun} /> : <RunView key={route.id} runId={route.id} onBack={goHome} />}
+        {route.name === "home" ? <HomeView onOpen={openRun} /> : <RunView key={route.id} runId={route.id} onBack={goHome} showcase={showcase} />}
       </main>
     </div>
   );
