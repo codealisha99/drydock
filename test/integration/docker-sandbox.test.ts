@@ -34,11 +34,11 @@ describe.skipIf(!dockerReady)("real Docker sandbox (requires drydock-sandbox:lat
   let cfg: ReturnType<typeof loadConfig>;
 
   beforeAll(async () => {
-    listener = await listenEphemeral();
+    // Test-only: containers reach the host through host.docker.internal, which on Linux is the docker bridge.
+    listener = await listenEphemeral("0.0.0.0");
     const dataDir = mkdtempSync(path.join(tmpdir(), "drydock-int-"));
     cfg = loadConfig({
       DRYDOCK_DATA_DIR: dataDir,
-      // Containers reach the host through host.docker.internal; the listener is bound to 127.0.0.1.
       DRYDOCK_SANDBOX_API_URL: `http://host.docker.internal:${listener.port}`,
       DRYDOCK_MODEL_PROVIDER: "scripted",
       DRYDOCK_CONCURRENCY: "2",
@@ -87,7 +87,8 @@ describe.skipIf(!dockerReady)("real Docker sandbox (requires drydock-sandbox:lat
       const r = engine.store.getRun(run.id);
       return r && TERMINAL.includes(r.status) ? r : undefined;
     }, 170_000);
-    expect(done.status).toBe("succeeded");
+    // Compare status and summary together so a failure says why the run failed.
+    expect({ status: done.status, summary: done.summary }).toEqual({ status: "succeeded", summary: expect.any(String) });
     expect(done.container_name).toBe(sandboxName(run.id));
     expect(docker(["inspect", "-f", "{{.State.Running}}", done.container_name!])).toBe("true");
 
