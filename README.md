@@ -2,8 +2,10 @@
 
 [![ci](https://github.com/codealisha99/drydock/actions/workflows/ci.yml/badge.svg)](https://github.com/codealisha99/drydock/actions/workflows/ci.yml)
 
-**Live demo:** https://drydock-demo-opal.vercel.app (read-only replay of three recorded runs on Vercel; writes and git return 403)
+**Live showcase:** https://drydock-demo-opal.vercel.app (read-only replay of five recorded runs on Vercel; writes and git return 403)
 **Landing page:** https://drydock-site-two.vercel.app
+
+![The run page: a multi-file fix replayed in the showcase, with test results, a highlighted diff and the outcome](docs/run-page.png)
 
 A cloud coding-agent platform: submit a task against a repo, and an agent works on it inside its own
 Docker sandbox, streams every step to a live timeline, and delivers the result as a branch and a pull
@@ -51,8 +53,9 @@ Showcase mode (read-only, no Docker needed):
 pnpm showcase               # serves showcase/seed.json and the built UI on :4100
 ```
 
-`DRYDOCK_MODE=showcase` loads three runs recorded against real Docker (succeeded, needs input, failed) and
-replays their events with the gaps they had; `?pace=slow` stretches the gaps 4x and keeps the order. Every
+`DRYDOCK_MODE=showcase` loads five runs recorded against real Docker (a one-line fix, a multi-file fix over three test
+rounds, a needs-input run that continues after a follow-up, a needs-input run, a failed run) and replays their events
+with the gaps they had. The UI replays slowed 4x by default; `?pace=slow` stretches the gaps 4x and keeps the order. Every
 write and every `/git` route returns 403 with "showcase mode: run it locally to start real runs". Regenerate
 the seed with `pnpm record:showcase`, which needs `drydock-sandbox:latest`.
 
@@ -130,9 +133,9 @@ curl -s localhost:4100/api/runs -H 'content-type: application/json' -d '{
 
 Run on macOS arm64 with Docker Desktop, from a clean `pnpm install --frozen-lockfile`:
 
-- `pnpm test`: 10 files, 60 tests pass (path guard, tools, agent loop, queue, recovery and sweep, git
+- `pnpm test`: 10 files, 66 tests pass (path guard, tools, agent loop, queue, recovery and sweep, git
   delivery, git HTTP, pipeline with a cancel, a follow-up and SSE replay, timeline model, showcase mode).
-- `pnpm test:integration`: 3 tests pass against real containers (hardened flags and no secrets inside,
+- `pnpm test:integration`: 3 tests pass against real containers (on Linux the test listener binds all interfaces so containers can reach it) (hardened flags and no secrets inside,
   full run with a pushed branch and PR record, managed containers removed on shutdown).
 - `pnpm typecheck` and `pnpm build` pass.
 - `pnpm demo`: passes. The agent fixes `add()` in the container; the tests go from `fail 1` to `fail 0`;
