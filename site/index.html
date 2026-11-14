@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>drydock: a coding agent that works in a box and hands you a branch</title>
+    <meta name="description" content="drydock runs a coding agent in its own hardened Docker sandbox, streams every step to a timeline, and delivers the result as a git branch. Credentials never enter the sandbox." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="drydock: a coding agent that works in a box and hands you a branch" />
+    <meta property="og:description" content="One hardened Docker sandbox per run, a live timeline, and git delivery. The hosted demo replays recorded runs." />
+    <meta property="og:image" content="__SITE_URL__/img/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="__SITE_URL__/" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230f2b33'/%3E%3Crect x='6' y='9' width='20' height='3' fill='%23e3a62f'/%3E%3Crect x='6' y='16' width='13' height='3' fill='%23f7f9f8'/%3E%3Crect x='6' y='23' width='17' height='3' fill='%232d6a55'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-head">
+      <a class="mark" href="#top" aria-label="drydock home">drydock</a>
+      <nav aria-label="Primary">
+        <a href="#how">How it works</a>
+        <a href="#runs">Recorded runs</a>
+        <a href="#run-it">Run it</a>
+        <a href="https://github.com/codealisha99/drydock">Source</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <h1>The agent works in a box. You get the branch.</h1>
+          <p class="lede">drydock runs a coding agent inside its own locked-down Docker container, streams every step to a live timeline, and delivers the result as a git branch. The model&rsquo;s keys and the push credentials never enter the sandbox.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="__LIVE_URL__/#/runs/4958fd73f9d8">Watch a recorded run</a>
+            <a class="btn" href="https://github.com/codealisha99/drydock">Read the code</a>
+          </div>
+          <p class="note">The hosted copy replays recorded runs. It cannot start new ones, because Railway has no Docker. Run it locally to start real runs.</p>
+        </div>
+
+        <figure class="log" aria-labelledby="log-cap">
+          <figcaption id="log-cap">
+            <span>Recorded run 4958fd73f9d8</span>
+            <span>scripted model, real Docker sandbox</span>
+          </figcaption>
+          <ol class="log-lines">
+        <li class="ln ln-sys" style="--i:0"><time>00.00</time><span class="lbl">status</span><span class="txt">status queued</span></li>
+        <li class="ln ln-sys" style="--i:1"><time>00.00</time><span class="lbl">status</span><span class="txt">status running</span></li>
+        <li class="ln ln-sys" style="--i:2"><time>00.32</time><span class="lbl">status</span><span class="txt">workspace ready</span></li>
+        <li class="ln ln-agent" style="--i:3"><time>00.32</time><span class="lbl">agent</span><span class="txt">I&#x27;ll run the test suite to see the failure first.</span></li>
+        <li class="ln ln-tool" style="--i:4"><time>00.32</time><span class="lbl">bash</span><span class="txt">node --test</span></li>
+        <li class="ln ln-err" style="--i:5"><time>00.42</time><span class="lbl">result</span><span class="txt">error: pass 0, fail 1</span></li>
+        <li class="ln ln-agent" style="--i:6"><time>00.42</time><span class="lbl">agent</span><span class="txt">add() is subtracting. Reading the source before editing.</span></li>
+        <li class="ln ln-tool" style="--i:7"><time>00.42</time><span class="lbl">read_file</span><span class="txt">src/math.js</span></li>
+        <li class="ln ln-res" style="--i:8"><time>00.45</time><span class="lbl">result</span><span class="txt">export function add(a, b) {</span></li>
+        <li class="ln ln-agent" style="--i:9"><time>00.45</time><span class="lbl">agent</span><span class="txt">The operator is wrong in add(). Fixing it.</span></li>
+        <li class="ln ln-tool" style="--i:10"><time>00.45</time><span class="lbl">edit_file</span><span class="txt">src/math.js</span></li>
+        <li class="ln ln-res" style="--i:11"><time>00.52</time><span class="lbl">result</span><span class="txt">wrote 46 chars to src/math.js</span></li>
+        <li class="ln ln-agent" style="--i:12"><time>00.52</time><span class="lbl">agent</span><span class="txt">Re-running the suite.</span></li>
+        <li class="ln ln-tool" style="--i:13"><time>00.52</time><span class="lbl">bash</span><span class="txt">node --test</span></li>
+        <li class="ln ln-res" style="--i:14"><time>00.61</time><span class="lbl">result</span><span class="txt">pass 1, fail 0</span></li>
+        <li class="ln ln-tool" style="--i:15"><time>00.61</time><span class="lbl">finish</span><span class="txt">succeeded</span></li>
+        <li class="ln ln-res" style="--i:16"><time>00.61</time><span class="lbl">result</span><span class="txt">finished</span></li>
+        <li class="ln ln-sys" style="--i:17"><time>00.73</time><span class="lbl">diff</span><span class="txt">+1 −1 in src/math.js</span></li>
+        <li class="ln ln-sys" style="--i:18"><time>01.02</time><span class="lbl">deliver</span><span class="txt">drydock/run-4958fd73f9d8 to local remote</span></li>
+        <li class="ln ln-out" style="--i:19"><time>01.02</time><span class="lbl">outcome</span><span class="txt">succeeded</span></li>
+        <li class="ln ln-sys" style="--i:20"><time>01.02</time><span class="lbl">status</span><span class="txt">status succeeded</span></li>
+          </ol>
+        </figure>
+      </section>
+
+      <section id="how" class="block split">
+        <h2>The hard part is the boundary.</h2>
+        <div class="prose">
+          <p>An agent that runs commands needs a machine, a repository and a way to push. None of the three should be trusted with more than it needs. So the sandbox gets none of the secrets, and the host does everything that touches the network or GitHub.</p>
+          <ul class="facts">
+            <li><strong>Container.</strong> <code>--cap-drop ALL</code>, <code>no-new-privileges</code>, a read-only root with a tmpfs workspace, 1 GB memory, 1 CPU, 256 PIDs, uid 1000, no host mounts.</li>
+            <li><strong>Git in, not out.</strong> The sandbox clones over a read-only smart-HTTP route on the host. Pushes to that route are refused.</li>
+            <li><strong>Patches, not credentials.</strong> The host applies the sandbox&rsquo;s <code>format-patch</code> output to a fresh clone and pushes it. The GitHub token goes through git&rsquo;s env config, never argv.</li>
+          </ul>
+          <p class="caveat">This is a container, not a VM. A kernel exploit escapes it, so do not treat it as a multi-tenant boundary.</p>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>How a run moves through the system</h2>
+        <figure class="diagram">
+          <svg viewBox="0 0 860 350" role="img" aria-labelledby="arch-title arch-desc">
+            <title id="arch-title">drydock architecture</title>
+            <desc id="arch-desc">Row one: the web UI calls the API, which queues runs for a worker on the host. The worker runs the agent loop, which drives a sandbox container with docker exec. The sandbox clones over HTTP from a read-only git route on the API. Patches leave the sandbox and reach the delivery step, which pushes a branch to a local remote or GitHub. The model is called from the agent loop. Runs and events are stored in SQLite.</desc>
+            <defs>
+              <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="#0f2b33" />
+              </marker>
+            </defs>
+            <g fill="none" stroke="#0f2b33" stroke-width="1.6" marker-end="url(#arr)">
+              <path d="M190 60 H230" />
+              <path d="M400 60 H440" />
+              <path d="M610 60 H650" />
+              <path d="M735 90 V160" />
+              <path d="M650 200 H550" />
+              <path d="M470 240 V270" />
+              <path d="M735 240 V270" stroke-dasharray="5 4" />
+              <path d="M470 160 V125 H315 V90" stroke-dasharray="5 4" />
+            </g>
+            <g font-family="IBM Plex Sans, sans-serif" font-size="14">
+              <rect x="20" y="30" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
+              <text x="105" y="56" text-anchor="middle" font-weight="600">Web UI</text>
+              <text x="105" y="75" text-anchor="middle" fill="#4a5d5a" font-size="12">:4101</text>
+
+              <rect x="230" y="30" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
+              <text x="315" y="56" text-anchor="middle" font-weight="600">API</text>
+              <text x="315" y="75" text-anchor="middle" fill="#4a5d5a" font-size="12">:4100, REST and SSE</text>
+
+              <rect x="440" y="30" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
+              <text x="525" y="56" text-anchor="middle" font-weight="600">Run queue</text>
+              <text x="525" y="75" text-anchor="middle" fill="#4a5d5a" font-size="12">concurrency cap</text>
+
+              <rect x="650" y="30" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
+              <text x="735" y="56" text-anchor="middle" font-weight="600">Worker</text>
+              <text x="735" y="75" text-anchor="middle" fill="#4a5d5a" font-size="12">host process</text>
+
+              <rect x="390" y="160" width="160" height="80" rx="2" fill="#e4eee9" stroke="#2d6a55" stroke-width="2" />
+              <text x="470" y="192" text-anchor="middle" font-weight="600">Sandbox</text>
+              <text x="470" y="212" text-anchor="middle" fill="#4a5d5a" font-size="12">container, no caps</text>
+
+              <rect x="650" y="160" width="170" height="80" rx="2" fill="#0f2b33" />
+              <text x="735" y="192" text-anchor="middle" font-weight="600" fill="#f7f9f8">Agent loop</text>
+              <text x="735" y="212" text-anchor="middle" fill="#b8c7c3" font-size="12">model and tools, host</text>
+
+              <rect x="230" y="270" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
+              <text x="315" y="296" text-anchor="middle" font-weight="600">SQLite</text>
+              <text x="315" y="315" text-anchor="middle" fill="#4a5d5a" font-size="12">runs, events, PRs</text>
+
+              <rect x="390" y="270" width="160" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" />
+              <text x="470" y="296" text-anchor="middle" font-weight="600">Delivery</text>
+              <text x="470" y="315" text-anchor="middle" fill="#4a5d5a" font-size="12">branch, PR</text>
+
+              <rect x="650" y="270" width="170" height="60" rx="2" fill="#f7f9f8" stroke="#0f2b33" stroke-dasharray="5 4" />
+              <text x="735" y="296" text-anchor="middle" font-weight="600">Model</text>
+              <text x="735" y="315" text-anchor="middle" fill="#4a5d5a" font-size="12">Anthropic or OpenAI API</text>
+            </g>
+            <g font-family="IBM Plex Mono, monospace" font-size="11" fill="#3e5a57">
+              <text x="600" y="192" text-anchor="middle">docker exec</text>
+              <text x="325" y="114">git clone, read-only</text>
+              <text x="480" y="257">patches</text>
+              <text x="743" y="257">model call</text>
+            </g>
+          </svg>
+          <figcaption>Solid arrows are control and data. Dashed arrows are the model call and the sandbox&rsquo;s git clone. The sandbox never holds a credential.</figcaption>
+        </figure>
+      </section>
+
+      <section id="runs" class="block">
+        <h2>What three recorded runs did</h2>
+        <p class="lead">Each row was produced by <code>pnpm record:showcase</code>: the real server, a real Docker sandbox and the keyless scripted model, against the same broken <code>add()</code> fixture. Numbers come from the recorded database rows.</p>
+        <table class="manifest">
+          <caption class="sr-only">Outcomes of the three recorded runs</caption>
+          <thead>
+            <tr><th scope="col">Outcome</th><th scope="col">Recorded run</th><th scope="col">Tool calls</th><th scope="col">Files changed</th><th scope="col">Delivered</th><th scope="col">Result summary</th></tr>
+          </thead>
+          <tbody>
+            <tr class="is-succeeded">
+              <td data-label="Outcome"><span class="stamp">succeeded</span></td>
+              <td data-label="Recorded run" class="mono">4958fd73f9d8</td>
+              <td data-label="Tool calls" class="num">5</td>
+              <td data-label="Files changed" class="num">1 (+1 −1)</td>
+              <td data-label="Delivered">branch on local remote</td>
+              <td data-label="Result summary">Fixed add() to return a + b; the test suite passes.</td>
+            </tr>
+            <tr class="is-needs_input">
+              <td data-label="Outcome"><span class="stamp">needs input</span></td>
+              <td data-label="Recorded run" class="mono">f7140d5b6960</td>
+              <td data-label="Tool calls" class="num">1</td>
+              <td data-label="Files changed" class="num">0</td>
+              <td data-label="Delivered">no</td>
+              <td data-label="Result summary">Two valid fixes exist for the failing test; which API should win?</td>
+            </tr>
+            <tr class="is-failed">
+              <td data-label="Outcome"><span class="stamp">failed</span></td>
+              <td data-label="Recorded run" class="mono">099fc87e07c4</td>
+              <td data-label="Tool calls" class="num">3</td>
+              <td data-label="Files changed" class="num">0</td>
+              <td data-label="Delivered">no</td>
+              <td data-label="Result summary">The test still fails and I could not find a change to src/math.js that is consistent with it. No files changed.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="caveat">The agent in these runs is a fixed script, not a language model. That is what makes them repeatable, and it is also why they prove the plumbing (sandbox, git, delivery, inbox) but not the model&rsquo;s judgment. The live Anthropic path has not been run end to end.</p>
+        <figure class="shots">
+          <img src="img/run-desktop.png" width="1280" height="900" alt="Run page at desktop width: the recorded succeeded run with its timeline, the delivery panel and the diff" />
+          <img src="img/home-mobile.png" width="375" height="1200" alt="Home page at 375 pixels wide: the runs ledger stacked as cards, the new-run form and the inbox" />
+          <figcaption>Captured from the showcase build at 1280 and 375 pixels wide, 15 November 2026.</figcaption>
+        </figure>
+      </section>
+
+      <section id="run-it" class="block">
+        <h2>Run it yourself.</h2>
+        <div class="prose run-it">
+          <p>You need Node 25 (or 22.13+), pnpm 10 and Docker. These are the README&rsquo;s commands; the last one submits a task to a scripted agent, follows the timeline, and checks the tests pass in the sandbox.</p>
+          <pre class="code"><code>pnpm install
+pnpm sandbox:build          # builds drydock-sandbox:latest (node:22-alpine + git, non-root)
+pnpm demo                   # keyless end-to-end run (starts the API, runs and tears down)</code></pre>
+          <p>Then <code>pnpm web</code> and open http://127.0.0.1:4101/ to read the run page. A real model needs a key in <code>.env</code>; see the README.</p>
+        </div>
+      </section>
+
+      <section class="block split">
+        <h2>What it does not do yet.</h2>
+        <ul class="limits prose">
+          <li>Local-path repos are published by symlink on the git route, which is readable by anything that can reach 127.0.0.1:4100. Fine for one developer&rsquo;s machine, not a shared host.</li>
+          <li>Containers keep a normal bridge network, so they can reach the internet. A per-run network with an egress allow-list would close this.</li>
+          <li>Private GitHub repos are not supported: the sandbox clones unauthenticated.</li>
+          <li>The live Anthropic path has not been verified end to end, and the GitHub delivery path is tested only against a fake fetch.</li>
+          <li>There is no per-tool approval gate. Review happens in the PR, after the run.</li>
+          <li>One process with an in-memory queue rebuilt from SQLite. Multi-host needs a real job queue.</li>
+        </ul>
+      </section>
+
+      <section class="block about-live">
+        <h2>About the hosted copy.</h2>
+        <div class="prose">
+          <p>The instance at <a href="__LIVE_URL__">__LIVE_URL__</a> runs on Railway, which has no Docker daemon, so it cannot start sandboxes. It serves the three recorded runs above, read-only, and replays their events with the gaps they had when they were recorded. The agent in those runs is a scripted model. No language model is called, and no model key is set on the hosted instance.</p>
+          <p>Every write and every git route on the hosted copy returns <code>403 showcase mode: run it locally to start real runs</code>.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-foot">
+      <p>drydock is MIT licensed. <a href="https://github.com/codealisha99/drydock">Source on GitHub</a> &middot; <a href="__LIVE_URL__">Live demo</a></p>
+    </footer>
+  </body>
+</html>
