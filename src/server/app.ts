@@ -7,54 +7,17 @@ import type { RunEvent } from "./events";
 import type { Engine } from "./engine";
 import { serveGitHttp } from "./git/http";
 import { ZodError } from "zod";
-import { serveStatic } from "@hono/node-server/serve-static";
-import { MAX_REPLAY_STREAMS, paceEvents, SHOWCASE_MESSAGE } from "./showcase";
+import { sseFrame, toRunDto } from "./read-model";
 
 const HEARTBEAT_MS = 15_000;
-
-export function toRunDto(run: RunRow) {
-  return {
-    id: run.id,
-    repo: run.repo_input,
-    baseBranch: run.base_branch,
-    workBranch: run.work_branch,
-    instruction: run.instruction,
-    delivery: run.delivery,
-    status: run.status,
-    summary: run.summary,
-    hasSandbox: run.container_name !== null,
-    needsAttention: run.status === "needs_input" || run.status === "failed",
-    createdAt: run.created_at,
-    updatedAt: run.updated_at,
-  };
-}
 
 function parseAfter(raw: string | undefined): number {
   const n = Number(raw ?? 0);
   return Number.isInteger(n) && n >= 0 ? n : 0;
 }
 
-function sseFrame(runId: string, e: RunEvent) {
-  return { id: String(e.seq), event: e.type, data: JSON.stringify({ runId, seq: e.seq, type: e.type, data: e.data, createdAt: e.createdAt }) };
-}
-
 export function createApp(engine: Engine, cfg: Config) {
   const app = new Hono();
-  const showcase = cfg.mode === "showcase";
-  let activeReplays = 0;
-
-  if (showcase) {
-    // Only reads reach the routes below. Every write and every git route is refused before it can
-    // touch Docker, the repo store, or a body parser.
-    app.use("*", async (c, next) => {
-      const readOnly = c.req.method === "GET" || c.req.method === "HEAD";
-      if (!readOnly || c.req.path === "/git" || c.req.path.startsWith("/git/")) {
-        return c.json({ error: SHOWCASE_MESSAGE }, 403);
-      }
-      return next();
-    });
-    app.use("/*", serveStatic({ root: cfg.webDir }));
-  }
 
   const runOr404 = (id: string): RunRow => {
     const run = engine.store.getRun(id);
@@ -103,30 +66,6 @@ export function createApp(engine: Engine, cfg: Config) {
   app.get("/api/runs/:id/events", (c) => {
     const runId = runOr404(c.req.param("id")).id;
     const after = parseAfter(c.req.query("after"));
-    if (showcase) {
-      if (activeReplays >= MAX_REPLAY_STREAMS) return c.json({ error: "showcase is busy; try again shortly" }, 503);
-      return streamSSE(c, async (stream) => {
-        activeReplays += 1;
-        let closed = false;
-        stream.onAbort(() => {
-          closed = true;
-        });
-        try {
-          // Replays recorded events with their original gaps, so the timeline plays out as it did.
-          for (const { event, delayMs } of paceEvents(engine.events.list(runId, after))) {
-            if (delayMs > 0) await new Promise((r) => setTimeout(r, delayMs));
-            if (closed) return;
-            await stream.writeSSE(sseFrame(runId, event));
-          }
-          while (!closed) {
-            await new Promise((r) => setTimeout(r, HEARTBEAT_MS));
-            if (!closed) await stream.writeSSE({ event: "ping", data: "" });
-          }
-        } finally {
-          activeReplays -= 1;
-        }
-      });
-    }
     return streamSSE(c, async (stream) => {
       let lastSeq = after;
       let chain: Promise<unknown> = Promise.resolve();
@@ -154,7 +93,7 @@ export function createApp(engine: Engine, cfg: Config) {
     });
   });
 
-  if (!showcase) app.all("/git/*", (c) => serveGitHttp(c.req.raw, cfg.remotesDir));
+  app.all("/git/*", (c) => serveGitHttp(c.req.raw, cfg.remotesDir));
 
   app.onError((err, c) => {
     if (err instanceof DomainError) return c.json({ error: err.message }, err.status);
