@@ -34,10 +34,10 @@
           <h1>The agent works in a box. You get the branch.</h1>
           <p class="lede">drydock runs a coding agent inside its own locked-down Docker container, streams every step to a live timeline, and delivers the result as a git branch. The model&rsquo;s keys and the push credentials never enter the sandbox.</p>
           <div class="actions">
-            <a class="btn btn-primary" href="#runs">See the recorded runs</a>
-            <a class="btn" href="https://github.com/codealisha99/drydock">Read the code</a>
+            <a class="btn btn-primary" href="https://drydock-demo-opal.vercel.app/#/runs/4958fd73f9d8">Watch a recorded run</a>
+            <a class="btn" href="#runs">See all three outcomes</a>
           </div>
-          <p class="note">The hosted copy, when it is live, replays recorded runs. It cannot start new ones, because its host has no Docker. Run it locally to start real runs.</p>
+          <p class="note">The live demo replays recorded runs. It cannot start new ones: it runs on Vercel, which has no Docker. Run it locally to start real runs.</p>
         </div>
 
         <figure class="log" aria-labelledby="log-cap">
@@ -220,9 +220,9 @@ pnpm demo                   # keyless end-to-end run (starts the API, runs and t
       </section>
 
       <section class="block about-live">
-        <h2>About the hosted copy.</h2>
+        <h2>About the live demo.</h2>
         <div class="prose">
-          <p>The hosted copy runs on a host with no Docker daemon, so it cannot start sandboxes. Its job is to serve the three recorded runs above, read-only, and replay their events with the gaps they had when they were recorded. The agent in those runs is a scripted model. No language model is called, and no model key is set on the hosted copy.</p>
+          <p>The live demo is at <a href="https://drydock-demo-opal.vercel.app">drydock-demo-opal.vercel.app</a>. It is a Vercel function over the three recorded runs above, read-only. Events replay with the gaps they had when they were recorded, so the succeeded run takes about one second. A slowed option stretches every gap four times and keeps the order. The agent in those runs is a scripted model. No language model is called, and no model key is set on the live demo.</p>
           <p>To try it locally with the same recorded runs, run <code>pnpm showcase</code> and open http://127.0.0.1:4100/. Start a real run with <code>pnpm api</code> and Docker.</p>
           <p>Every write and every git route on the hosted copy returns <code>403 showcase mode: run it locally to start real runs</code>.</p>
         </div>
@@ -230,7 +230,7 @@ pnpm demo                   # keyless end-to-end run (starts the API, runs and t
     </main>
 
     <footer class="site-foot">
-      <p>drydock is MIT licensed. <a href="https://github.com/codealisha99/drydock">Source on GitHub</a></p>
+      <p>drydock is MIT licensed. <a href="https://github.com/codealisha99/drydock">Source on GitHub</a> &middot; <a href="https://drydock-demo-opal.vercel.app">Live demo</a></p>
     </footer>
   </body>
 </html>

@@ -1,7 +1,7 @@
 # drydock
 
+**Live demo:** https://drydock-demo-opal.vercel.app (read-only replay of three recorded runs on Vercel; writes and git return 403)
 **Landing page:** https://drydock-site-two.vercel.app
-**Live demo:** not deployed yet. Railway refused a new project (its trial had expired), so there is no hosted replay. Run `pnpm showcase` to replay the same recorded runs locally.
 
 A cloud coding-agent platform: submit a task against a repo, and an agent works on it inside its own
 Docker sandbox, streams every step to a live timeline, and delivers the result as a branch and a pull
@@ -50,9 +50,13 @@ pnpm showcase               # serves showcase/seed.json and the built UI on :410
 ```
 
 `DRYDOCK_MODE=showcase` loads three runs recorded against real Docker (succeeded, needs input, failed) and
-replays their events with the gaps they had. Every write and every `/git` route returns 403 with
-"showcase mode: run it locally to start real runs". Regenerate the seed with `pnpm record:showcase`, which
-needs `drydock-sandbox:latest`.
+replays their events with the gaps they had; `?pace=slow` stretches the gaps 4x and keeps the order. Every
+write and every `/git` route returns 403 with "showcase mode: run it locally to start real runs". Regenerate
+the seed with `pnpm record:showcase`, which needs `drydock-sandbox:latest`.
+
+The live demo runs the same read-only app as a Vercel function (`api/index.ts`, `vercel.json`, and
+`middleware.ts`, which refuses every non-GET request). The app imports no database, process or git module; a
+test walks the import graph to keep it that way. `Dockerfile` is the self-hosted showcase image.
 
 Real model (needs a key):
 
