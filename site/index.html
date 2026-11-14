@@ -8,9 +8,9 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="drydock: a coding agent that works in a box and hands you a branch" />
     <meta property="og:description" content="One hardened Docker sandbox per run, a live timeline, and git delivery. The hosted demo replays recorded runs." />
-    <meta property="og:image" content="__SITE_URL__/img/og.png" />
+    <meta property="og:image" content="https://drydock-site-two.vercel.app/img/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="canonical" href="__SITE_URL__/" />
+    <link rel="canonical" href="https://drydock-site-two.vercel.app/" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%230f2b33'/%3E%3Crect x='6' y='9' width='20' height='3' fill='%23e3a62f'/%3E%3Crect x='6' y='16' width='13' height='3' fill='%23f7f9f8'/%3E%3Crect x='6' y='23' width='17' height='3' fill='%232d6a55'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -34,10 +34,10 @@
           <h1>The agent works in a box. You get the branch.</h1>
           <p class="lede">drydock runs a coding agent inside its own locked-down Docker container, streams every step to a live timeline, and delivers the result as a git branch. The model&rsquo;s keys and the push credentials never enter the sandbox.</p>
           <div class="actions">
-            <a class="btn btn-primary" href="__LIVE_URL__/#/runs/4958fd73f9d8">Watch a recorded run</a>
+            <a class="btn btn-primary" href="#runs">See the recorded runs</a>
             <a class="btn" href="https://github.com/codealisha99/drydock">Read the code</a>
           </div>
-          <p class="note">The hosted copy replays recorded runs. It cannot start new ones, because Railway has no Docker. Run it locally to start real runs.</p>
+          <p class="note">The hosted copy, when it is live, replays recorded runs. It cannot start new ones, because its host has no Docker. Run it locally to start real runs.</p>
         </div>
 
         <figure class="log" aria-labelledby="log-cap">
@@ -222,14 +222,15 @@ pnpm demo                   # keyless end-to-end run (starts the API, runs and t
       <section class="block about-live">
         <h2>About the hosted copy.</h2>
         <div class="prose">
-          <p>The instance at <a href="__LIVE_URL__">__LIVE_URL__</a> runs on Railway, which has no Docker daemon, so it cannot start sandboxes. It serves the three recorded runs above, read-only, and replays their events with the gaps they had when they were recorded. The agent in those runs is a scripted model. No language model is called, and no model key is set on the hosted instance.</p>
+          <p>The hosted copy runs on a host with no Docker daemon, so it cannot start sandboxes. Its job is to serve the three recorded runs above, read-only, and replay their events with the gaps they had when they were recorded. The agent in those runs is a scripted model. No language model is called, and no model key is set on the hosted copy.</p>
+          <p>To try it locally with the same recorded runs, run <code>pnpm showcase</code> and open http://127.0.0.1:4100/. Start a real run with <code>pnpm api</code> and Docker.</p>
           <p>Every write and every git route on the hosted copy returns <code>403 showcase mode: run it locally to start real runs</code>.</p>
         </div>
       </section>
     </main>
 
     <footer class="site-foot">
-      <p>drydock is MIT licensed. <a href="https://github.com/codealisha99/drydock">Source on GitHub</a> &middot; <a href="__LIVE_URL__">Live demo</a></p>
+      <p>drydock is MIT licensed. <a href="https://github.com/codealisha99/drydock">Source on GitHub</a></p>
     </footer>
   </body>
 </html>

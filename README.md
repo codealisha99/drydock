@@ -1,5 +1,8 @@
 # drydock
 
+**Landing page:** https://drydock-site-two.vercel.app
+**Live demo:** not deployed yet. Railway refused a new project (its trial had expired), so there is no hosted replay. Run `pnpm showcase` to replay the same recorded runs locally.
+
 A cloud coding-agent platform: submit a task against a repo, and an agent works on it inside its own
 Docker sandbox, streams every step to a live timeline, and delivers the result as a branch and a pull
 request. Think small Devin / Codex cloud / Cursor background agents. The agent loop runs on the host and
@@ -39,6 +42,17 @@ pnpm demo                   # keyless end-to-end run (starts the API, runs and t
 a scripted agent fixes `add()` inside a container, checks the tests pass in the sandbox, verifies the branch
 on the bare remote and the PR record, then stops the server. Set `DEMO_KEEP=1 pnpm demo` to leave the API up,
 then run `pnpm web` and open http://127.0.0.1:4101/ to see the run page.
+
+Showcase mode (read-only, no Docker needed):
+
+```bash
+pnpm showcase               # serves showcase/seed.json and the built UI on :4100
+```
+
+`DRYDOCK_MODE=showcase` loads three runs recorded against real Docker (succeeded, needs input, failed) and
+replays their events with the gaps they had. Every write and every `/git` route returns 403 with
+"showcase mode: run it locally to start real runs". Regenerate the seed with `pnpm record:showcase`, which
+needs `drydock-sandbox:latest`.
 
 Real model (needs a key):
 
@@ -110,8 +124,8 @@ curl -s localhost:4100/api/runs -H 'content-type: application/json' -d '{
 
 Run on macOS arm64 with Docker Desktop, from a clean `pnpm install --frozen-lockfile`:
 
-- `pnpm test`: 9 files, 48 tests pass (path guard, tools, agent loop, queue, recovery and sweep, git
-  delivery, git HTTP, pipeline with a cancel, a follow-up and SSE replay, timeline model).
+- `pnpm test`: 10 files, 59 tests pass (path guard, tools, agent loop, queue, recovery and sweep, git
+  delivery, git HTTP, pipeline with a cancel, a follow-up and SSE replay, timeline model, showcase mode).
 - `pnpm test:integration`: 3 tests pass against real containers (hardened flags and no secrets inside,
   full run with a pushed branch and PR record, managed containers removed on shutdown).
 - `pnpm typecheck` and `pnpm build` pass.
