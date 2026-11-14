@@ -44,6 +44,8 @@ export function buildTimeline(events: readonly StreamEvent[]): TimelineItem[] {
         items.push({ kind: "agent", seq: e.seq, text: str(d.text), at });
         break;
       case "tool_call": {
+        // finish is the agent's closing call; the outcome row shows its status and summary instead.
+        if (str(d.name) === "finish") break;
         const id = str(d.id);
         toolIndex.set(id, items.length);
         items.push({
@@ -96,4 +98,12 @@ export function toolHeadline(name: string, input: Record<string, unknown>): stri
     default:
       return JSON.stringify(input);
   }
+}
+
+/** Totals from node --test's TAP summary lines ("# pass 2", "# fail 3"). Null when the output has none. */
+export function testSummary(output: string): { pass: number; fail: number } | null {
+  const pass = /^# pass (\d+)$/m.exec(output);
+  const fail = /^# fail (\d+)$/m.exec(output);
+  if (!pass && !fail) return null;
+  return { pass: Number(pass?.[1] ?? 0), fail: Number(fail?.[1] ?? 0) };
 }

@@ -33,16 +33,17 @@ export function App() {
 
   return (
     <div className="shell">
+      <a className="skip-link" href="#main">Skip to content</a>
       <header className="topbar">
         <a href="#/" className="brand" onClick={goHome}>drydock</a>
+        {showcase && (
+          <span className="mode-chip" title="Replays of runs recorded against real Docker with a scripted model. Writes are refused.">
+            Recorded runs, read only
+          </span>
+        )}
         <span className="topbar-note">Background coding agents, one sandbox per run</span>
       </header>
-      {showcase && (
-        <p className="showcase-note" role="note">
-          Showcase: this hosted copy replays recorded runs and cannot start new ones. Run it locally to start real runs.
-        </p>
-      )}
-      <main className="content">
+      <main id="main" className="content" tabIndex={-1}>
         {route.name === "home" ? <HomeView onOpen={openRun} showcase={showcase} /> : <RunView key={route.id} runId={route.id} onBack={goHome} showcase={showcase} />}
       </main>
     </div>
