@@ -36,6 +36,19 @@ export const SCRIPTS: Record<string, readonly ScriptStep[]> = {
       ],
     },
   ],
+  // Runs the real suite in the sandbox, reads the code, then gives up with an honest failure and no edits.
+  "cannot-fix": [
+    { content: [{ type: "text", text: "Running the suite before changing anything." }, call(1, "bash", { command: "node --test" })] },
+    { content: [{ type: "text", text: "Reading add() to see what the test expects." }, call(2, "read_file", { path: "src/math.js" })] },
+    {
+      content: [
+        call(3, "finish", {
+          status: "failed",
+          summary: "The test still fails and I could not find a change to src/math.js that is consistent with it. No files changed.",
+        }),
+      ],
+    },
+  ],
   "needs-input": [
     {
       content: [

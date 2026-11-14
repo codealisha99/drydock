@@ -1,0 +1,8 @@
+node_modules
+.demo
+data
+dist
+.git
+.env
+site
+test

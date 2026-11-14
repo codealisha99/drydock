@@ -3,3 +3,5 @@ dist
 .demo
 data
 .env
+site/.vercel
+.vercel

@@ -1,8 +1,14 @@
 import path from "node:path";
 
 export type ModelProvider = "anthropic" | "openai" | "scripted";
+/** live: real sandboxes and git. showcase: read-only replay of recorded runs (no Docker, git or local paths). */
+export type ServerMode = "live" | "showcase";
 
 export interface Config {
+  mode: ServerMode;
+  host: string;
+  /** Built UI served by the showcase mode (dist/web). */
+  webDir: string;
   port: number;
   dataDir: string;
   remotesDir: string;
@@ -20,6 +26,7 @@ export interface Config {
 }
 
 const PROVIDERS: readonly ModelProvider[] = ["anthropic", "openai", "scripted"];
+const MODES: readonly ServerMode[] = ["live", "showcase"];
 
 function intEnv(env: NodeJS.ProcessEnv, key: string, fallback: number): number {
   const raw = env[key];
@@ -33,7 +40,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const dataDir = path.resolve(env.DRYDOCK_DATA_DIR ?? "./data");
   const provider = (env.DRYDOCK_MODEL_PROVIDER ?? "anthropic") as ModelProvider;
   if (!PROVIDERS.includes(provider)) throw new Error(`DRYDOCK_MODEL_PROVIDER must be one of ${PROVIDERS.join(", ")}`);
+  const mode = (env.DRYDOCK_MODE || "live") as ServerMode;
+  if (!MODES.includes(mode)) throw new Error(`DRYDOCK_MODE must be one of ${MODES.join(", ")}`);
   return {
+    mode,
+    host: env.DRYDOCK_HOST || "127.0.0.1",
+    webDir: path.resolve(env.DRYDOCK_WEB_DIR ?? "dist/web"),
     port: intEnv(env, "DRYDOCK_PORT", 4100),
     dataDir,
     remotesDir: path.join(dataDir, "remotes"),
