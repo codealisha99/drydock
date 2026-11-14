@@ -128,7 +128,7 @@ curl -s localhost:4100/api/runs -H 'content-type: application/json' -d '{
 
 Run on macOS arm64 with Docker Desktop, from a clean `pnpm install --frozen-lockfile`:
 
-- `pnpm test`: 10 files, 59 tests pass (path guard, tools, agent loop, queue, recovery and sweep, git
+- `pnpm test`: 10 files, 60 tests pass (path guard, tools, agent loop, queue, recovery and sweep, git
   delivery, git HTTP, pipeline with a cancel, a follow-up and SSE replay, timeline model, showcase mode).
 - `pnpm test:integration`: 3 tests pass against real containers (hardened flags and no secrets inside,
   full run with a pushed branch and PR record, managed containers removed on shutdown).
